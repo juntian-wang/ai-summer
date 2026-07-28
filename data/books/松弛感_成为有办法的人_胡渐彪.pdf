@@ -1,0 +1,13 @@
+<html>
+<head><title></title></head>
+<body>
+<script>
+    var pathurl = window.location.pathname;
+    if(pathurl.indexOf("mip/") != -1){
+        pathurl = pathurl.substring(4)
+    }
+    window.location.href='https://yabook.blog'+pathurl;</script>
+<center><h1>403 Forbidden</h1></center>
+<hr><center>- nginx -</center>
+</body>
+</html>

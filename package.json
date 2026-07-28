@@ -1,0 +1,16 @@
+{
+  "name": "ai-qipashuo",
+  "version": "1.0.0",
+  "description": "AI 奇葩说 - 多 Agent 辩论节目",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node --watch server/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^16.3.0",
+    "express": "^4.18.0",
+    "uuid": "^9.0.1"
+  }
+}

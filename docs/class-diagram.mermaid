@@ -1,0 +1,136 @@
+classDiagram
+    class Session {
+        +string id
+        +number topicIndex
+        +string topicTitle
+        +Debater[] proTeam
+        +Debater[] conTeam
+        +number currentStepIdx
+        +string status  "CREATED | RUNNING | SUCCESS | ABORTED"
+        +MemoryEntry[] memory
+        +VoteResult votes
+        +SessionLog log
+        +number createdAt
+        +number lastAccessedAt
+        +string errorInfo
+    }
+
+    class MemoryEntry {
+        +string step
+        +string type
+        +string side
+        +string speakerName
+        +string content
+        +number attemptCount
+        +boolean degraded
+        +number timestamp
+    }
+
+    class VoteResult {
+        +VoteRecord init
+        +VoteRecord final
+        +SwingInfo swing
+        +number overtimeRounds
+    }
+
+    class VoteRecord {
+        +Map~number, VoteChoice~ votes
+        +number proCount
+        +number conCount
+        +number abstainCount
+        +number validCount
+        +string[] failedViewerIds
+    }
+
+    class VoteChoice {
+        +string choice
+        +string reason
+        +number confidence
+        +number[] emotionImpacts
+    }
+
+    class SwingInfo {
+        +number swingCount
+        +number[] swingViewerIds
+        +Map~number, string~ details
+    }
+
+    class SessionLog {
+        +StepLog[] steps
+        +number totalDurationMs
+        +number totalApiCalls
+        +number totalRetries
+        +number totalDegrades
+    }
+
+    class StepLog {
+        +string step
+        +number durationMs
+        +number attemptCount
+        +boolean success
+        +boolean degraded
+        +string error
+    }
+
+    class Debater {
+        +string id
+        +string name
+        +string label
+        +string persona
+        +string bestPosition
+        +string[] speakingRules
+        +string openingStyle
+        +string rebuttalStyle
+        +string[] forbidden
+        +string[] exampleLines
+        +string assignedPosition
+    }
+
+    class AudienceMember {
+        +number id
+        +string label
+        +string tendency
+        +string[] dimensions
+        +EmotionSensitivity emotion
+        +TriggerMap triggers
+    }
+
+    class EmotionSensitivity {
+        +number humor
+        +number logic
+        +number emotion
+        +number aggression
+        +number story
+        +number novelty
+        +number golden
+        +number question
+        +number exclamation
+        +number dash
+        +number short
+        +number long
+        +number life
+        +number data
+        +number attack
+        +number sublime
+    }
+
+    class FlowStep {
+        +string step
+        +string type
+        +string side
+        +string position
+        +string role
+        +string label
+        +number round
+        +number idx
+    }
+
+    Session "1" *-- "many" MemoryEntry
+    Session "1" *-- "1" VoteResult
+    Session "1" *-- "1" SessionLog
+    Session "1" *-- "3" Debater : proTeam
+    Session "1" *-- "3" Debater : conTeam
+    VoteResult "1" *-- "2" VoteRecord
+    VoteResult "1" *-- "1" SwingInfo
+    VoteRecord "1" *-- "many" VoteChoice
+    SessionLog "1" *-- "many" StepLog

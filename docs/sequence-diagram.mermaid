@@ -1,0 +1,84 @@
+sequenceDiagram
+    participant Client as 前端
+    participant Server as server.js
+    participant Flow as flowDefinition.js
+    participant Store as sessionStore.js
+    participant Agent as agentEngine.js
+    participant Viewer as viewerEngine.js
+    participant LLM as DeepSeek API
+
+    Note over Client,LLM: === 阶段 1: 创建 Session ===
+    Client->>Server: POST /api/session/start { pro, con, topicIndex }
+    Server->>Store: createSession(topicIndex, proIds, conIds)
+    Store->>Store: loadAllData() [缓存]
+    Store->>Store: 生成 sessionId (uuid)
+    Store-->>Server: { sessionId }
+    Server-->>Client: { sessionId: "abc-123" }
+
+    Note over Client,LLM: === 阶段 2: 循环执行每一步 ===
+    loop Each Step in FLOW (28 steps)
+        Client->>Server: GET /api/session/abc-123/next
+        Server->>Store: getSession("abc-123")
+        Server->>Flow: getStep(session.currentStepIdx)
+        Flow-->>Server: { step: "host_opening", type: "host" }
+
+        alt type = host | speech | battle | closing | mentor
+            Server->>Agent: executeStep(session, flowStep)
+            Agent->>Agent: buildFullPrompt(session, flowStep)
+
+            rect rgb(240, 240, 240)
+                Note right of Agent: 重试循环 (最多4次)
+                loop attempt = 1..3 (完整 Prompt)
+                    Agent->>LLM: POST /v1/chat/completions
+                    LLM-->>Agent: content
+                    Agent->>Agent: validateOutput(content, flowStep)
+                    alt 验证通过
+                        break
+                    else 验证失败 && attempt < 3
+                        Agent->>Agent: 等待 2s 后重试
+                    end
+                end
+                alt 3次都失败
+                    Agent->>Agent: buildSimplifiedPrompt()
+                    Agent->>LLM: POST /v1/chat/completions
+                    LLM-->>Agent: content
+                    Agent->>Agent: validateOutput(content)
+                    alt 再次失败
+                        Agent->>Agent: generateFallbackContent()
+                    end
+                end
+            end
+
+            Agent-->>Server: { success, content, attemptCount, degraded }
+            Server->>Store: updateSession(id, { memory.push })
+
+        else type = vote
+            Server->>Viewer: executeVote(session, flowStep.label)
+            rect rgb(240, 240, 240)
+                Note right of Viewer: 30人分6批投票
+                loop batch of 5 viewers
+                    par batch[0] to batch[4] 并行
+                        Viewer->>LLM: prepareVotePrompt(viewer)
+                        LLM-->>Viewer: { choice, reason, confidence }
+                    end
+                    alt 不是最后一批
+                        Viewer->>Viewer: sleep(500ms)
+                    end
+                end
+                alt 有效票 < 20
+                    Viewer->>Viewer: fillDefaultVotes()
+                end
+                Viewer->>Viewer: calculateSwing()
+            end
+            Viewer-->>Server: { voteRecord, success }
+            Server->>Store: updateSession(id, { votes })
+        end
+
+        Server->>Store: updateSession(id, { currentStepIdx + 1 })
+        Server-->>Client: { step, type, content, side, speakerName, flowProgress }
+    end
+
+    Note over Client,LLM: === 阶段 3: 获取完整台本 ===
+    Client->>Server: GET /api/session/abc-123/full
+    Server->>Store: getSession("abc-123")
+    Server-->>Client: { fullTranscript }

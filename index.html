@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AI 的夏天</title>
+<style>
+:root{
+  --bg:#0f0a1a;
+  --bg2:#1a1333;
+  --bg3:#252045;
+  --text:#e0d6ff;
+  --muted:#8b7fb3;
+  --gold:#d4a843;
+  --pro:#7f77dd;
+  --con:#d85a30;
+  --green:#4ade80;
+  --red:#f87171;
+  --border:#2a2450;
+  --radius:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;
+}
+.container{max-width:1300px;margin:0 auto;padding:20px}
+
+/* header */
+header{text-align:center;padding:20px 0 12px;position:relative}
+header h1{font-size:34px;color:var(--gold);letter-spacing:3px}
+header .sub{color:var(--muted);font-size:14px;margin-top:4px}
+.ctrl-bar{display:flex;justify-content:center;gap:12px;margin-top:8px;min-height:32px}
+.btn-ctrl{
+  padding:6px 16px;border:1px solid var(--border);border-radius:6px;
+  background:var(--bg2);color:var(--text);cursor:pointer;font-size:13px;
+  display:none;align-items:center;gap:6px
+}
+.btn-ctrl:hover{border-color:var(--gold)}
+.btn-ctrl.show{display:inline-flex}
+
+/* config panel */
+.config{background:var(--bg2);border-radius:var(--radius);padding:20px;border:1px solid var(--border);margin-bottom:16px}
+.config.hidden{display:none}
+.row{display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.row label{min-width:70px;font-size:14px;color:var(--muted);flex-shrink:0}
+.row select,.row input{flex:1;min-width:120px;padding:7px 10px;border-radius:6px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text);font-size:14px}
+.row select:focus,.row input:focus{outline:none;border-color:var(--pro)}
+.vs-badge{font-size:18px;color:var(--gold);font-weight:700;padding:0 10px}
+.multi-label{font-size:13px;color:var(--muted);margin-left:4px}
+.btn-start{
+  display:block;width:100%;max-width:260px;margin:16px auto 0;padding:12px 0;
+  font-size:16px;font-weight:700;background:linear-gradient(135deg,var(--pro),var(--gold));
+  color:#fff;border:none;border-radius:var(--radius);cursor:pointer;letter-spacing:4px;
+  transition:opacity .2s
+}
+.btn-start:hover{opacity:.9}
+.btn-start:disabled{opacity:.4;cursor:not-allowed}
+
+/* main layout */
+.main-layout{display:none;gap:24px;margin-top:0}
+.main-layout.show{display:flex}
+.debate-area{flex:1;min-width:0}
+.sidebar{width:280px;flex-shrink:0;display:flex;flex-direction:column;gap:14px}
+
+/* debate stage */
+.stage{
+  background:var(--bg2);border-radius:var(--radius);padding:24px;
+  border:1px solid var(--border);height:calc(100vh - 210px);min-height:300px;overflow-y:auto
+}
+.stage::-webkit-scrollbar{width:4px}
+.stage::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.stage-empty{text-align:center;color:var(--muted);padding:80px 0;font-size:15px}
+.step-label{font-size:11px;color:var(--pro);margin-bottom:10px;font-weight:500;text-transform:uppercase;letter-spacing:1px}
+
+/* host */
+.host-line{text-align:center;color:var(--gold);font-size:17px;margin:14px 0;font-style:italic;line-height:2.0}
+
+/* speech bubbles */
+.speech{max-width:82%;margin-bottom:16px;padding:16px 20px;border-radius:var(--radius);font-size:17px;line-height:2.0;opacity:0;animation:fadeIn .3s forwards}
+.speech.pro{background:var(--bg3);border:1px solid var(--border);margin-right:auto;border-left:3px solid var(--pro)}
+.speech.con{background:var(--bg3);border:1px solid var(--border);margin-left:auto;border-right:3px solid var(--con)}
+.speech .badge{font-size:13px;color:var(--muted);margin-bottom:4px;font-weight:500}
+@keyframes fadeIn{to{opacity:1}}
+
+/* battle */
+.battle-wrap{display:flex;gap:14px;margin-bottom:16px;min-height:140px;position:relative}
+.battle-round{position:absolute;top:-18px;left:50%;transform:translateX(-50%);
+  font-size:13px;color:var(--muted);background:var(--bg);padding:0 8px;z-index:2}
+.battle-side{flex:1;padding:14px 16px;border-radius:var(--radius);font-size:16px;line-height:1.9;
+  background:var(--bg3);border:2px solid var(--border);transition:all .4s;opacity:.4;position:relative;overflow:hidden}
+.battle-side.active{opacity:1;border-color:var(--gold);transform:scale(1.02);box-shadow:0 0 20px rgba(212,168,67,.3)}
+.battle-side .b-name{font-size:14px;font-weight:600;margin-bottom:6px}
+.battle-side .b-side{font-size:11px;color:var(--muted);margin-bottom:4px}
+.battle-timer{position:absolute;bottom:0;left:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--pro));
+  transition:width 6s linear;width:100%;border-radius:0 0 8px 8px}
+.battle-side.active .battle-timer{width:0%}
+
+/* vote */
+.vote-box{margin:16px 0;background:var(--bg3);border-radius:8px;padding:16px 20px}
+.vote-title{font-size:14px;color:var(--muted);margin-bottom:10px;text-align:center}
+
+/* sway */
+.sway-card{
+  background:var(--bg3);border-left:3px solid var(--gold);padding:12px 16px;
+  margin:8px 0;border-radius:6px;font-size:13px;line-height:1.7;opacity:0;animation:fadeIn .3s forwards
+}
+.sway-card .s-label{color:var(--gold);font-weight:500}
+.sway-card .s-dir{color:var(--muted);font-size:11px}
+
+/* mentor */
+.mentor-card{
+  background:var(--bg3);padding:16px 20px;margin:12px 0;border-radius:var(--radius);
+  border:1px solid var(--border);font-size:16px;line-height:1.9
+}
+.mentor-card .m-name{font-weight:600;color:var(--gold);margin-bottom:6px;font-size:16px}
+
+/* sidebar */
+.panel{background:var(--bg2);border-radius:var(--radius);padding:14px;border:1px solid var(--border)}
+.panel-title{font-size:13px;color:var(--muted);margin-bottom:8px;font-weight:500;letter-spacing:1px}
+
+/* 观众席 */
+.auditorium{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:8px;background:var(--bg);border-radius:8px}
+.seat{position:relative;display:flex;flex-direction:column;align-items:center;padding:5px 3px;
+  border-radius:6px;background:var(--bg3);cursor:default;transition:all .3s;min-height:46px}
+.seat .s-emoji{font-size:26px;line-height:1;transition:transform .3s;display:block}
+.seat .s-label{font-size:8px;color:var(--muted);line-height:1;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;text-align:center}
+.seat:hover{background:var(--border);z-index:5}
+.seat:hover .s-emoji{transform:scale(1.4)}
+.seat:hover .s-label{color:var(--text);font-size:8px}
+.seat.pulse .s-emoji{animation:seatPop .4s ease}
+@keyframes seatPop{0%{transform:scale(.8)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
+.seat-progress{font-size:11px;color:var(--muted);text-align:center;margin-top:6px;padding-top:4px;border-top:1px solid var(--border)}
+
+/* 实时投票拉锯条 */
+.vote-bar-container{position:relative;height:44px;margin:6px 0 10px;border-radius:8px;overflow:hidden;background:var(--bg)}
+.vote-half{position:absolute;top:0;height:100%;transition:width .6s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;justify-content:center}
+.vote-half.pro{left:0;background:linear-gradient(90deg,rgba(127,119,221,.6),rgba(127,119,221,.3));border-right:2px solid var(--pro);border-radius:8px 0 0 8px}
+.vote-half.con{right:0;background:linear-gradient(270deg,rgba(216,90,48,.6),rgba(216,90,48,.3));border-left:2px solid var(--con);border-radius:0 8px 8px 0}
+.vote-half .v-label{font-size:16px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.vote-half .v-num{font-size:15px;color:rgba(255,255,255,.8);margin:0 4px}
+.vote-info{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);padding:0 2px}
+.vote-initial{font-size:11px;color:var(--muted);text-align:center;margin-bottom:2px}
+/* status & toast */
+.status-bar{font-size:14px;color:var(--muted);text-align:center;padding:6px;display:none}
+.status-bar.show{display:block;animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+.actions{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap;display:none}
+.actions.show{display:flex}
+.btn{padding:8px 18px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);
+  color:var(--text);cursor:pointer;font-size:13px;transition:border-color .2s}
+.btn:hover{border-color:var(--gold)}
+.btn-skip{padding:4px 12px;border:1px solid var(--red);border-radius:6px;background:transparent;
+  color:var(--red);cursor:pointer;font-size:11px;margin-top:6px;display:none}
+.btn-skip.show{display:inline-block}
+.toast{
+  position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--bg2);color:var(--text);padding:10px 24px;border-radius:20px;
+  font-size:14px;border:1px solid var(--gold);
+  opacity:0;transition:opacity .3s,transform .3s;z-index:100;pointer-events:none
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* responsive */
+@media(max-width:768px){
+  .main-layout.show{flex-direction:column}
+  .sidebar{width:100%;flex-direction:row;flex-wrap:wrap}
+  .panel{flex:1;min-width:140px}
+  .speech{max-width:90%}
+  .battle-wrap{flex-direction:column}
+  .container{padding:10px}
+  header h1{font-size:22px}
+  .config{padding:14px}
+  .stage{padding:14px;max-height:450px}
+  .row label{min-width:60px;font-size:12px}
+  .btn-start{max-width:100%}
+}
+
+/* 打字机光标 */
+.typing-cursor::after{content:'|';animation:blink .7s infinite;color:var(--gold);font-weight:300}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <h1>🎙️ AI 的夏天</h1>
+  <div class="sub">6 辩手 · 30 观众 · 实时情绪 · AI 辩论节目</div>
+  <div class="ctrl-bar">
+    <button class="btn-ctrl" id="btnPause" onclick="togglePause()">⏸️ 暂停</button>
+    <button class="btn-ctrl" id="btnSkip" onclick="skipStep()">⏭️ 跳过</button>
+    <span class="btn-ctrl" id="flowProgress" style="font-size:12px;color:var(--muted);cursor:default;border:none;background:none"></span>
+    <span id="modeIndicator" style="font-size:12px;padding:2px 8px;border-radius:4px;display:none"></span>
+  </div>
+</header>
+
+<!-- 配置面板 -->
+<div class="config" id="configPanel">
+  <div class="row"><label>辩题</label>
+    <select id="topicSelect"></select>
+    <input type="text" id="topicCustom" placeholder="或自己输入..." style="flex:0.6">
+  </div>
+  <div class="row" style="justify-content:center">
+    <span style="color:var(--pro);font-size:13px;font-weight:600">正方</span>
+    <span class="vs-badge">VS</span>
+    <span style="color:var(--con);font-size:13px;font-weight:600">反方</span>
+  </div>
+  <div class="row"><label>一辩</label><select id="pro1"></select><select id="con1"></select></div>
+  <div class="row"><label>二辩</label><select id="pro2"></select><select id="con2"></select></div>
+  <div class="row"><label>三辩</label><select id="pro3"></select><select id="con3"></select></div>
+  <div class="row"><label>主持人</label><select id="hostSelect"></select>
+    <label>导师</label><select id="mentorSelect" style="flex:0.6"></select>
+    <span class="multi-label">（选2位）</span>
+  </div>
+  <button class="btn-start" id="btnStart" onclick="startDebate()">开 始 辩 论</button>
+</div>
+
+<!-- 主布局 -->
+<div class="main-layout" id="mainLayout">
+  <div class="debate-area">
+    <div class="stage" id="stage">
+      <div id="debateContent"><div class="stage-empty">点击「开始辩论」后观看节目</div></div>
+    </div>
+    <div class="status-bar" id="statusBar">⏳ 正在生成...</div>
+    <div class="actions" id="actionBar">
+      <button class="btn" onclick="location.reload()">再来一局</button>
+      <button class="btn" onclick="exportScript()">导出台本</button>
+    </div>
+  </div>
+
+  <!-- 侧边栏 -->
+  <div class="sidebar">
+    <div class="panel"><div class="panel-title">🎭 观众席</div><div id="auditorium" class="auditorium"></div>
+      <div class="seat-progress" id="audienceSummary">30 位观众就座</div>
+    </div>
+    <div class="panel" id="votePanel" style="display:none"><div class="panel-title">📊 实时投票</div>
+      <div id="voteTugOfWar"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ==================== 数据加载 ====================
+let DEBATERS=[],TOPICS=[],HOST=null,MENTORS=null,AUDIENCE=[];
+async function loadData(){
+  try{
+    // 尝试从 data/ 加载本地 JSON
+    const [d,t,h,m,a]=await Promise.all([
+      fetch('data/debaters.json').then(r=>r.json()),
+      fetch('data/topics.json').then(r=>r.json()),
+      fetch('data/referee.json').then(r=>r.json()),
+      fetch('data/mentors.json').then(r=>r.json()),
+      fetch('data/audience.json').then(r=>r.json())
+    ]);
+    DEBATERS=d;TOPICS=t;HOST=Array.isArray(h)?h[0]:h;MENTORS=m;AUDIENCE=a;
+    populateSelects();
+  }catch(e){
+    // 降级：用内嵌基础数据
+    DEBATERS=[
+      {id:'chenming',name:'陈铭',label:'逻辑型'},
+      {id:'xiaoxiao',name:'肖骁',label:'综艺型'},
+      {id:'zhanqingyun',name:'詹青云',label:'理性型'},
+      {id:'fushouer',name:'傅首尔',label:'金句型'},
+      {id:'huangzhizhong',name:'黄执中',label:'煽情型'},
+      {id:'lidan',name:'李诞',label:'解构型'},
+      {id:'yanrujing',name:'颜如晶',label:'吃货型'},
+      {id:'maweiwei',name:'马薇薇',label:'犀利型'},
+      {id:'qiuchen',name:'邱晨',label:'严密型'},
+      {id:'jiangsida',name:'姜思达',label:'先锋型'},
+      {id:'xirui',name:'席瑞',label:'共情型'},
+      {id:'fantiantian',name:'范湉湉',label:'泼辣型'}
+    ];
+    TOPICS=[{title:'结婚到底要不要买房？'},{title:'该不该告诉孩子家里不富裕？'},{title:'小学生该不该有手机？'}];
+    HOST={name:'马东风格',style:'幽默控场'};
+    MENTORS=[{name:'薛兆丰',title:'经济学视角'},{name:'蔡康永',title:'温柔视角'}];
+    AUDIENCE=Array.from({length:30},(_,i)=>({
+      id:i+1,label:['职场妈妈','程序员','大学生','退休大爷','创业者'][i%5],
+      emotion:{humor:.5,logic:.5,emotion:.5,story:.5,golden:.5,aggression:.3,novelty:.5}
+    }));
+    populateSelects();
+    toast('数据加载失败，使用内置数据');
+  }
+}
+
+function populateSelects(){
+  const topicEl=document.getElementById('topicSelect');
+  topicEl.innerHTML='<option value="">-- 选择辩题 --</option>';
+  TOPICS.forEach((t,i)=>{topicEl.innerHTML+=`<option value="${i}">${t.title}</option>`});
+
+  const opts=DEBATERS.map((d,i)=>`<option value="${i}">${d.name}（${d.label}）</option>`).join('');
+  const ids=['pro1','pro2','pro3','con1','con2','con3'];
+  ids.forEach(id=>{document.getElementById(id).innerHTML=opts});
+
+  // 随机分配辩手：打乱索引，前3给正方，后3给反方
+  const indices=DEBATERS.map((_,i)=>i);
+  for(let i=indices.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [indices[i],indices[j]]=[indices[j],indices[i]];
+  }
+  ids.forEach((id,i)=>{document.getElementById(id).selectedIndex=indices[i]});
+
+  document.getElementById('hostSelect').innerHTML=HOST?`<option value="0">${HOST.name}</option>`:'';
+  document.getElementById('mentorSelect').innerHTML=MENTORS.map((m,i)=>`<option value="${i}">${m.name}</option>`).join('');
+}
+
+// ==================== 情绪引擎 ====================
+const EMOJI_MAP=['😂','🤔','😤','👏','😐','😠','🤯','😲','💪','🥱'];
+const EMOTION_KEYS=['humor','logic','emotion','golden','story','aggression','novelty','exclamation','short','sublime'];
+const EMOJI_NAMES=['幽默','逻辑','感动','金句','故事','攻击','新颖','惊讶','短促','升华'];
+const EMOJI_COLORS=['c0','c1','c2','c3','c4','c5','c6','c7','c8','c4'];
+let audienceEmotions=[]; // [{id, label, dominant_emoji_idx}]
+
+function initEmotionEngine(){
+  audienceEmotions=AUDIENCE.map(a=>({
+    id:a.id,label:a.label,
+    dominantIdx:2 // 默认 😐
+  }));
+  updateEmotionPanel();
+}
+
+function analyzeText(text){
+  if(!text)return EMOTION_KEYS.reduce((o,k)=>({...o,[k]:0}),{});
+  const len=Math.max(text.length,1);
+  const features={
+    humor: (text.match(/[！？~哎呀天哪哈哈笑死滑稽调侃]/g)||[]).length/len*20,
+    logic: (text.match(/[因所如果但是不是证明因为所以逻辑分析定义本质]/g)||[]).length/len*15,
+    emotion: (text.match(/[爱恨痛哭感动心疼温暖难受愤怒幸福悲伤]/g)||[]).length/len*20,
+    golden: (text.match(/[不是...而是人生意义价值最重要]/g)||[]).length/len*15,
+    story: (text.match(/[我有个人曾经那时候记得]/g)||[]).length/len*20,
+    aggression: (text.match(/[不我不能错反对你凭什么滚吵赢打]/g)||[]).length/len*15,
+    novelty: (text.match(/[？如果换个角度重新思考颠覆打破常规]/g)||[]).length/len*15,
+    exclamation: (text.match(/[！!?？]/g)||[]).length/len*10,
+    short: text.split(/[。！？]/).filter(s=>s.length<8).length/len*20,
+    sublime: (text.match(/[命真意义价值灵魂人性世界生命爱自由]/g)||[]).length/len*18
+  };
+  Object.keys(features).forEach(k=>{features[k]=Math.min(features[k],1)});
+  return features;
+}
+
+function computeReactions(textFeatures){
+  audienceEmotions.forEach(ae=>{
+    const a=AUDIENCE.find(x=>x.id===ae.id)||AUDIENCE[0];
+    if(!a)return;
+    // 10维特征加权，每个观众有自己的敏感度分布
+    const scores=EMOTION_KEYS.map((key,i)=>{
+      const sensitivity=(a.emotion&&a.emotion[key])||(key==='aggression'?0.2:0.4);
+      const detected=textFeatures[key]||0;
+      return sensitivity*detected*(0.85+Math.random()*0.3); // 随机波动
+    });
+    // 同时考虑 trigger 关键词
+    const triggers=a.triggers||{};
+    const triggerBonus=Object.keys(triggers).reduce((sum,word)=>{
+      return sum+(textFeatures.humor>0&&triggers[word]>0?triggers[word]*0.1:0);
+    },0);
+    // 找最高分作为情绪，加 trigger 影响
+    let maxIdx=9, maxVal=0;
+    scores.forEach((s,i)=>{
+      const bonus=i===0?triggerBonus:0; // trigger 主要影响幽默维度
+      if(s+bonus>maxVal){maxVal=s+bonus;maxIdx=i}
+    });
+    // 如果分数太低，归为 😐（末位）
+    ae.dominantIdx=maxVal<0.1?9:maxIdx;
+    ae.triggerActive=triggerBonus>0.1;
+  });
+}
+
+function updateEmotionPanel(){
+  const panel=document.getElementById('auditorium');
+  if(!panel)return;
+  panel.innerHTML=audienceEmotions.map(ae=>{
+    const a=AUDIENCE.find(x=>x.id===ae.id);
+    const label=a?a.label:'观众';
+    const emoji=EMOJI_MAP[ae.dominantIdx]||'😐';
+    return `<div class="seat" title="${label}: ${EMOJI_NAMES[ae.dominantIdx]||'平静'}">
+      <span class="s-emoji">${emoji}</span>
+      <span class="s-label">${label}</span>
+    </div>`;
+  }).join('');
+  // 更新汇总
+  const summary=document.getElementById('audienceSummary');
+  if(summary){
+    const counts=Array(10).fill(0);
+    audienceEmotions.forEach(ae=>counts[ae.dominantIdx]++);
+    const activeEmojis=EMOJI_MAP.filter((_,i)=>counts[i]>0).map((e,i)=>{
+      const idx=EMOJI_MAP.indexOf(e);
+      return `${e}${counts[idx]}`;
+    }).join(' ');
+    summary.textContent=activeEmojis||'😐 All';
+  }
+}
+
+// ==================== 跑票追踪 ====================
+let voteHistory=[];
+function initRunoff(proVotes){
+  voteHistory=[{pro:proVotes,con:30-proVotes}];
+  updateVoteTugOfWar();
+}
+function addRunoffPoint(proVotes){
+  voteHistory.push({pro:proVotes,con:30-proVotes});
+  updateVoteTugOfWar();
+}
+
+// ==================== 实时投票拉锯条 ====================
+let initialVoteDisplay=null; // 存初投数据用于显示
+function updateVoteTugOfWar(){
+  const panel=document.getElementById('votePanel');
+  const container=document.getElementById('voteTugOfWar');
+  if(!container||!panel)return;
+  const len=voteHistory.length;
+  if(len===0){panel.style.display='none';return}
+  panel.style.display='block';
+  const last=voteHistory[len-1];
+  const pro=last.pro,con=last.con,total=pro+con;
+  const proPct=Math.round(pro/total*100);
+  // 初投基准
+  const init=initialVoteDisplay||last;
+  const change=pro-init.pro;
+  container.innerHTML=`
+    <div class="vote-initial">基准 ${init.pro}:${init.con}</div>
+    <div class="vote-bar-container">
+      <div class="vote-half pro" style="width:${proPct}%">
+        <span class="v-label">正</span><span class="v-num">${pro}</span>
+      </div>
+      <div class="vote-half con" style="width:${100-proPct}%">
+        <span class="v-num">${con}</span><span class="v-label">反</span>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:700;padding:3px 8px 0">
+      ${change!==0?`<span style="color:${change>0?'var(--green)':'var(--red)'}">${change>0?'+'+change:change}</span>
+      <span style="color:${change>0?'var(--red)':'var(--green)'}">${change>0?'-'+change:'+'+Math.abs(change)}</span>`:'<span style="color:var(--muted);margin:0 auto">持平</span>'}
+    </div>`;
+}
+function setInitialVote(pro,con){
+  initialVoteDisplay={pro,con};
+  updateVoteTugOfWar();
+}
+
+// ==================== 模拟辩论数据 ====================
+let paused=false, skipRequested=false, playRunning=false;
+let useMock=true, sessionId=null, lastInitialVote=null, lastInitialVoteData=null;
+let mockSteps=[], currentStepIdx=0;
+let typewriterState={el:null,text:'',i:0,speed:50,timer:null,resolve:null};
+
+function buildMockSteps(topic,proTeam,conTeam,host,mentors){
+  const proName=proTeam.map(d=>d.name);
+  const conName=conTeam.map(d=>d.name);
+  const proLabel=proTeam.map(d=>d.label);
+  const conLabel=conTeam.map(d=>d.label);
+  const mentorName=mentors.map(m=>m.name||m);
+  return [
+    {type:'host',text:`欢迎来到 AI 的夏天！今天的辩论主题是——「${topic}」。在听任何辩论之前，我们先看看现场的 30 位观众怎么想。`},
+    {type:'vote',stage:'initial',pro:12,con:18},
+    {type:'speech',side:'pro',name:proName[0],label:proLabel[0],pos:'一辩',
+      text:`这道题的关键，不在于"要不要"买房，而在于"买房"对我们这个时代意味着什么。当我们在问结婚要不要买房的时候，我们真正在问的是：我们要不要为婚姻寻找一个物质支点？我的回答是要。不是因为房子本身有多重要，而是因为它给了婚姻一个可以锚定的坐标。没有这个坐标，你们俩在这个巨大的城市里，就像两片浮萍，随波逐流。`},
+    {type:'speech',side:'con',name:conName[0],label:conLabel[0],pos:'一辩',
+      text:`哎呀我的陈铭老师～你说得特别有道理，但我有个问题：你结婚了吗？你知道现在的房价有多离谱吗？两个人刚结婚，本来是最甜蜜的时候，结果背上三十年房贷，你管这叫"锚定坐标"？这叫"套牢"好吗！我觉得，租房子结婚怎么了？租来的房子就不是家了？你妈在出租屋给你做的饭，难道就不香了？`},
+    {type:'speech',side:'pro',name:proName[1],label:proLabel[1],pos:'二辩',
+      text:`我们换个角度想。从经济学的角度来看，买房本质上是一种强制储蓄。结婚后的前十年，是最容易因为琐事吵架的十年。而有房贷的夫妻，反而多了一个"不能随便辞职"的共同约束——听起来很残酷，但数据告诉我们，有房产的夫妻离婚率确实更低。不是房子维系了感情，而是共同的财务约束，给了彼此更多磨合的时间。`},
+    {type:'speech',side:'con',name:conName[1],label:conLabel[1],pos:'二辩',
+      text:`我有个闺蜜，跟她老公结婚的时候，两家凑了首付买了房。两年后，两个人为了装修风格吵了无数次，最后一地鸡毛。你说房子是婚姻的锚，我倒觉得房子是婚姻的放大镜——好的时候更好，不好的时候，房贷就是压死骆驼的最后一根稻草。我承认，房子能给安全感。但问题是，这个安全感的代价，是不是太大了？`},
+    {type:'speech',side:'pro',name:proName[2],label:proLabel[2],pos:'三辩',
+      text:`我想讲一个故事。我有个朋友，结婚五年一直租房住。去年房东说要卖房，他们一家三口在两个月内搬了三次家。他五岁的女儿有天问：爸爸，为什么我们没有自己的家？那一刻，他说他不知道怎么回答。`},
+    {type:'speech',side:'con',name:conName[2],label:conLabel[2],pos:'三辩',
+      text:`哎呀这个辩题……房子和家，是一回事吗？黄老师讲的故事特别动人，但你仔细想——房子是家吗？那个小女孩问的是"自己的家"，不是"自己的房产"。我从小在出租屋长大，我妈把每个租来的房子都收拾得特别温馨。家是住出来的，不是买出来的。如果你非要说有房才有家，那那些一辈子租房的人，是不是都不配拥有幸福？`},
+    // 开杠 4 轮
+    {type:'battle',round:1,side:'pro',name:proName[0],text:`反方一直在说房子贵。但贵，不是不买的理由。三十年前大家也觉得买彩电贵，但那是刚需。结婚的刚需是什么？是确定性。房子给了婚姻最大的确定性。`},
+    {type:'battle',round:1,side:'con',name:conName[0],text:`确定性？那你怎么解释现在那么多有房有车还离婚的？确定性不在房产证上，在两个人的心里。`},
+    {type:'battle',round:2,side:'pro',name:proName[1],text:`我来说个现实问题——试想一下，你们结婚后第一个孩子出生。半夜喂奶、换尿布，你是在自己的客厅里做这些事，还是在房东随时可能收回的客厅里？这件事对母亲的心理影响是完全不同的。`},
+    {type:'battle',round:2,side:'con',name:conName[1],text:`你说的这个场景，我承认对母亲来说感受不同。但你要知道，现在很多年轻人连首付都凑不出来，你让他们怎么办？借钱？啃老？是不是为了一个所谓的"家"，先把两个家庭都掏空了再说？`},
+    {type:'battle',round:3,side:'pro',name:proName[2],text:`我们不是在要求每个人都要买房。我们是在说，如果条件允许，买房的长期收益——不仅仅是经济上的，更是心理上的——远超它的成本。这不是对错问题，这是个选择问题。而我们要做的，是让更多人拥有这个选择权。`},
+    {type:'battle',round:3,side:'con',name:conName[2],text:`我完全同意你说的"要有选择权"。那我们的分歧只有一个——你把房子当成了婚姻的必需品，而我把它当成一个可选项。你可以选买房，也可以选租房。我今天来这个舞台想说的是：不要因为别人都买房，你就觉得不买房就是错的。清醒一点，朋友们。`},
+    // 结辩
+    {type:'closing',side:'con',name:conName[2],label:conLabel[2],
+      text:`说了这么多，我的立场其实很简单。结婚要不要买房？我的回答是：有钱就买，没钱别硬买。千万别让一套房子，毁掉两个人最该轻松快乐的几年。房子有的是，但那个愿意跟你一起面对一切的人，错过了，可能就真的回不来了。人间不值得，但身边的人值得。`},
+    {type:'closing',side:'pro',name:proName[2],label:proLabel[2],
+      text:`最后我想说——我们这一代人，总在说"逃离北上广"，总在说"租来的生活"。但你们有没有想过，当我们谈起婚姻的时候，我们到底在怕什么？我们怕的不是没有房子，我们怕的是没有根。房子从来不是目的，但它是我们在这个城市里，可以理直气壮说一句"我到家了"的那个地方。不是为了自己，是为了那个在门口等你回家的人。`},
+    // 终投
+    {type:'vote',stage:'final',pro:18,con:12,
+      sways:[
+        {who:'观众 #07（大学生）',from:'反方',to:'正方',reason:'正方三辩开杠那句"给孩子确定性"让我想到了我爸妈。他们就是租房把我带大的，我知道那种没有安全感的感觉。'},
+        {who:'观众 #15（职场妈妈）',from:'反方',to:'正方',reason:'詹青云的二辩发言让我重新算了这笔账。长期来看，买房的确定性和强制储蓄确实有它的道理。'},
+        {who:'观众 #22（创业者）',from:'反方',to:'正方',reason:'黄执中结辩说的"到家了"三个字，我一个大老爷们眼睛湿了。十年创业，搬家七次，那滋味我知道。'},
+        {who:'观众 #29（退休大爷）',from:'正方',to:'反方',reason:'我本来支持买房的。但李诞那句"家是住出来的不是买出来的"让我想了很久。老伴走了以后，我守着这套大房子，空空荡荡的。'},
+        {who:'观众 #11（程序员）',from:'反方',to:'正方',reason:'陈铭的理性分析有数据支撑，逻辑上说服了我。'},
+        {who:'观众 #05（大学生）',from:'反方',to:'正方',reason:'傅首尔说得也有道理，但正方三辩那个故事太戳人了。我也想在结婚时给未来的她一个确定的坐标。'}
+      ],
+      winner:'正方翻盘！+6 票'},
+    {type:'mentor',name:mentorName[0],title:(mentors[0]&&mentors[0].title)||'经济学视角',
+      text:`这场辩论双方都没说错。关键不在于房子本身，而在于——你是在买资产，还是在买自由？从经济学角度看，买房是一个重大的资产配置决策，不是情感决策。正方赢了辩论，但从理性角度看，反方也不是全无道理。这不是对错问题，是 trade-off 问题。`},
+    {type:'mentor',name:mentorName[1],title:(mentors[1]&&mentors[1].title)||'温柔视角',
+      text:`我听完只有一个感受——你们都在算。算钱、算利率、算首付、算安全感。但婚姻不是算出来的。我见过住豪宅的夫妻相敬如"冰"，也见过十平米出租屋里相拥而眠的年轻人。买不买房，最后都是睡在一张床上。跟谁住，才重要。`},
+    {type:'done'}
+  ];
+}
+
+// ==================== 渲染函数 ====================
+function scrollToBottom(){
+  const stage=document.getElementById('stage');
+  if(stage)stage.scrollTop=stage.scrollHeight;
+}
+function typeWrite(el,text,speed=50){
+  return new Promise(resolve=>{
+    el.innerHTML='';
+    typewriterState={el,text,i:0,speed,timer:null,resolve};
+    advanceTypewriter();
+    el.classList.add('typing-cursor');
+  });
+}
+
+function advanceTypewriter(){
+  const s=typewriterState;
+  if(s.timer)clearInterval(s.timer);
+  if(s.i>=s.text.length){
+    s.el.classList.remove('typing-cursor');
+    if(s.resolve)s.resolve();
+    return;
+  }
+  s.timer=setInterval(()=>{
+    if(paused)return;
+    if(s.i>=s.text.length){
+      clearInterval(s.timer);
+      s.el.classList.remove('typing-cursor');
+      if(s.resolve)s.resolve();
+      return;
+    }
+    s.el.textContent+=s.text[s.i];
+    s.i++;
+    scrollToBottom();
+  },s.speed);
+}
+
+function pauseTypewriter(){
+  if(typewriterState.timer)clearInterval(typewriterState.timer);
+}
+function resumeTypewriter(){
+  if(typewriterState.i<typewriterState.text.length)advanceTypewriter();
+  else if(typewriterState.resolve)typewriterState.resolve();
+}
+
+function renderStep(step){
+  const container=document.getElementById('debateContent');
+  // 移除空状态
+  const empty=container.querySelector('.stage-empty');
+  if(empty)empty.remove();
+
+  switch(step.type){
+    case 'host':{
+      const div=document.createElement('div');
+      div.className='host-line';
+      container.appendChild(div);
+      // 情绪更新 + 打字机同时进行
+      const feats=analyzeText(step.text);
+      computeReactions(feats);
+      updateEmotionPanel();
+      return typeWrite(div,step.text).then(()=>{
+        scrollToBottom();
+      });
+    }
+    case 'speech':
+    case 'closing':{
+      const div=document.createElement('div');
+      const side=step.side;
+      div.className=`speech ${side}`;
+      const labelText=step.pos?`${step.name}·${step.label}（${step.pos}）`:step.name;
+      div.innerHTML=`<div class="badge">${step.type==='closing'?'📝 结辩':''} ${labelText}</div><span class="typing-area"></span>`;
+      container.appendChild(div);
+      scrollToBottom();
+      const textSpan=div.querySelector('.typing-area');
+      // 先分析情绪
+      const feats=analyzeText(step.text);
+      computeReactions(feats);
+      updateEmotionPanel();
+      // 跑票微波动
+      if(voteHistory.length>0){
+        const last=voteHistory[voteHistory.length-1].pro;
+        const drift=Math.random()>0.5?1:-1;
+        const newPro=Math.max(0,Math.min(30,last+drift));
+        addRunoffPoint(newPro);
+      }
+      return typeWrite(textSpan,step.text).then(()=>{
+        scrollToBottom();
+      });
+    }
+    case 'battle':{
+      // 寻找或创建 battle 行
+      let battleRow=container.querySelector(`.battle-row-${step.round}`);
+      if(!battleRow){
+        battleRow=document.createElement('div');
+        battleRow.className=`battle-wrap battle-row-${step.round}`;
+        // 轮次标签
+        const label=document.createElement('div');
+        label.className='battle-round';
+        label.textContent=`⚡ 开杠 Round ${step.round}/6`;
+        battleRow.appendChild(label);
+        // 创建左右两侧
+        const left=document.createElement('div');
+        left.className='battle-side';
+        const right=document.createElement('div');
+        right.className='battle-side';
+        left.innerHTML='<div class="b-side">正方</div><div class="b-name"></div><div class="b-text"></div><div class="battle-timer"></div>';
+        right.innerHTML='<div class="b-side">反方</div><div class="b-name"></div><div class="b-text"></div><div class="battle-timer"></div>';
+        battleRow.appendChild(left);
+        battleRow.appendChild(right);
+        container.appendChild(battleRow);
+      }
+      const sides=battleRow.querySelectorAll('.battle-side');
+      const idx=step.side==='pro'?0:1;
+      const otherIdx=1-idx;
+      sides[idx].querySelector('.b-name').textContent='⚡ '+step.name;
+      sides[idx].querySelector('.b-text').textContent=step.text;
+      sides[idx].classList.add('active');
+      sides[idx].querySelector('.battle-timer').style.width='100%'; // 重置计时条
+      sides[otherIdx].classList.remove('active');
+      scrollToBottom();
+      // 情绪 + 跑票
+      const feats=analyzeText(step.text);
+      computeReactions(feats);
+      updateEmotionPanel();
+      if(voteHistory.length>0){
+        const last=voteHistory[voteHistory.length-1].pro;
+        const drift=Math.floor(Math.random()*3)-1;
+        const newPro=Math.max(0,Math.min(30,last+drift));
+        addRunoffPoint(newPro);
+      }
+      return Promise.resolve();
+    }
+    case 'vote':{
+      const box=document.createElement('div');
+      box.className='vote-box';
+      const pctPro=Math.round(step.pro/30*100);
+      // 终投时对比初投
+      const hasInitVote=lastInitialVoteData!==null;
+      const initPro=hasInitVote?lastInitialVoteData.pro:0;
+      const initCon=hasInitVote?lastInitialVoteData.con:0;
+      const changePro=step.stage==='final'?step.pro-initPro:0;
+      const runoffs=step.stage==='final'?Math.abs(changePro):0;
+
+      let title='📊 赛前投票';
+      if(step.stage==='final'&&hasInitVote){
+        title=`📊 最终投票  |  初投 ${initPro}:${initCon}  →  终投 ${step.pro}:${step.con}`;
+      }else if(step.stage==='final'){
+        title='📊 最终投票';
+      }
+
+      box.innerHTML=`
+        <div class="vote-title">${title}</div>
+        <div style="display:flex;align-items:center;gap:8px;margin:8px 0">
+          <span style="font-size:14px;font-weight:700;color:var(--pro);min-width:30px">正</span>
+          <div style="flex:1;height:32px;background:var(--bg);border-radius:8px;overflow:hidden;position:relative">
+            <div class="vote-single-bar pro" style="position:absolute;left:0;top:0;height:100%;width:${pctPro}%;background:linear-gradient(90deg,rgba(127,119,221,.6),rgba(127,119,221,.3));transition:width .8s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;justify-content:center;border-right:2px solid var(--pro)">
+              <span style="font-size:15px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5)">${step.pro}</span>
+            </div>
+            <div style="position:absolute;right:0;top:0;height:100%;width:${100-pctPro}%;display:flex;align-items:center;justify-content:center">
+              <span style="font-size:15px;font-weight:700;color:rgba(255,255,255,.7)">${step.con}</span>
+            </div>
+          </div>
+          <span style="font-size:14px;font-weight:700;color:var(--con);min-width:30px;text-align:right">反</span>
+        </div>
+        ${changePro!==0?`<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;padding:0 38px">
+          <span style="color:${changePro>0?'var(--green)':'var(--red)'}">${changePro>0?'+'+changePro:''}${changePro<0?changePro:''}</span>
+          <span style="color:${changePro>0?'var(--red)':'var(--green)'}">${changePro>0?'-'+changePro:''}${changePro<0?'+'+Math.abs(changePro):''}</span>
+        </div>`:''}`;
+      container.appendChild(box);
+      scrollToBottom();
+      // 存储初投数据 + 跑票追踪
+      if(step.stage==='initial'){
+        lastInitialVoteData={pro:step.pro,con:step.con};
+        setInitialVote(step.pro,step.con);
+        initRunoff(step.pro);
+      }else{
+        addRunoffPoint(step.pro);
+      }
+      // 跑票卡片 + 跑票统计
+      const allSways=step.sways||[];
+      // API details: 终投时与初投对比算跑票
+      if(step.stage==='initial'&&step.details&&step.details.length){
+        lastInitialVote=step.details;
+      }
+      if(step.stage==='final'&&step.details&&step.details.length&&lastInitialVote){
+        const initMap={};
+        lastInitialVote.forEach(d=>{initMap[d.viewerId]=d.choice});
+        step.details.forEach(d=>{
+          if(initMap[d.viewerId]&&initMap[d.viewerId]!==d.choice){
+            allSways.push({
+              who:`观众 #${d.viewerId}（${d.label||''}）`,
+              from:initMap[d.viewerId]==='pro'?'正方':'反方',
+              to:d.choice==='pro'?'正方':'反方',
+              reason:d.reason||'（理由未提供）'
+            });
+          }
+        });
+      }
+      if(allSways.length){
+        setTimeout(()=>{
+          const winnerSide=step.pro>step.con?'正方':'反方';
+          const diff=Math.abs(step.pro-step.con);
+          const winner=document.createElement('div');
+          winner.style.cssText='text-align:center;color:var(--gold);font-size:14px;font-weight:600;margin:8px 0';
+          winner.textContent=`🏆 ${winnerSide}获胜（${diff}票优势）！跑票${allSways.length}人`;
+          container.appendChild(winner);
+          allSways.slice(0,8).forEach(s=>{
+            const card=document.createElement('div');
+            card.className='sway-card';
+            card.innerHTML=`<span class="s-label">${s.who}</span>
+              <span class="s-dir">${s.from} → ${s.to}</span><br>“${s.reason}”`;
+            container.appendChild(card);
+            scrollToBottom();
+          });
+        },600);
+      }
+      return new Promise(r=>setTimeout(r,800));
+    }
+    case 'mentor':{
+      const card=document.createElement('div');
+      card.className='mentor-card';
+      // 根据导师姓名分配 emoji
+      const eMap={'薛兆丰':'🧑‍🏫','蔡康永':'🎩','马东':'🎙️'};
+      const icon=Object.keys(eMap).find(k=>step.name.includes(k));
+      card.innerHTML=`<div class="m-name">${icon?eMap[icon]:'🎙️'} ${step.name}</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px">${step.title||'导师点评'}</div>
+        <span class="typing-area"></span>`;
+      container.appendChild(card);
+      scrollToBottom();
+      const textSpan=card.querySelector('.typing-area');
+      return typeWrite(textSpan,step.text).then(()=>{
+        scrollToBottom();
+      });
+    }
+    case 'done':{
+      document.getElementById('statusBar').classList.remove('show');
+      document.getElementById('actionBar').classList.add('show');
+      document.getElementById('btnPause').classList.remove('show');
+      document.getElementById('btnSkip').classList.remove('show');
+      const doneMsg=document.createElement('div');
+      doneMsg.style.cssText='text-align:center;color:var(--gold);font-size:16px;font-weight:600;padding:20px 0';
+      doneMsg.textContent='🎉 辩论结束！';
+      container.appendChild(doneMsg);
+      playRunning=false;
+      return Promise.resolve();
+    }
+  }
+  return Promise.resolve();
+}
+
+// ==================== API 数据标准化 ====================
+// 将后端 API 响应字段映射为 renderStep 能处理的格式
+function normalizeAPIStep(data){
+  if(data.done) return {type:'done',status:data.status||'SUCCESS'};
+  const step={
+    type:data.type,
+    text:data.content||'',
+    name:data.speakerName||'',
+    side:data.side,
+    flowProgress:data.flowProgress||null,
+    degraded:data.degraded||false,
+    attemptCount:data.attemptCount||1
+  };
+  if(data.type==='vote'){
+    step.pro=data.pro;step.con=data.con;
+    step.abstain=data.abstain||0;
+    step.stage=data.label==='init'?'initial':'final';
+    step.pro_pct=data.pro_pct;step.con_pct=data.con_pct;
+    step.validCount=data.validCount;
+    step.details=data.details||[];
+  }
+  if(data.type==='battle'){
+    const m=data.step&&data.step.match(/r(\d+)/);
+    step.round=m?parseInt(m[1]):1;
+  }
+  if(data.type==='mentor') step.title=data.speakerTitle||'导师点评';
+  return step;
+}
+
+// ==================== 播放循环 ====================
+// 双模式：useMock=true → 遍历 mockSteps; false → 轮询 API
+async function playLoop(){
+  if(playRunning)return;
+  playRunning=true;
+  while(true){
+    if(skipRequested){
+      skipRequested=false;
+      if(useMock)currentStepIdx++;
+      // 跳过时更新情绪
+      const feats=analyzeText('(跳过)');
+      computeReactions(feats);updateEmotionPanel();
+      continue;
+    }
+    if(paused){playRunning=false;return}
+
+    let step,done=false;
+    if(useMock){
+      if(currentStepIdx>=mockSteps.length)break;
+      step=mockSteps[currentStepIdx];
+      done=(step.type==='done');
+    }else{
+      try{
+        const controller=new AbortController();
+        const tid=setTimeout(()=>controller.abort(),120000);
+        const res=await fetch(`/api/session/${sessionId}/next`,{signal:controller.signal});
+        clearTimeout(tid);
+        const json=await res.json();
+        console.log('[API] /next 返回:', json.data&&json.data.type, json.data&&json.data.step||'');
+        if(json.code!==200||!json.data)throw new Error('API返回异常: code='+json.code);
+        const raw=json.data;
+        if(raw.done){done=true;step={type:'done',status:raw.status||'SUCCESS'}}
+        else step=normalizeAPIStep(raw);
+    }catch(e){
+      console.error('[API] /next 失败:', e.message);
+      setAPIMode(false);
+      toast(`API请求中断: ${e.message}，降级到模拟数据`);
+      useMock=true;currentStepIdx=0;
+      const [proTeam,conTeam,mentors]=getCurrentConfigFromSelects();
+      mockSteps=buildMockSteps(
+        document.getElementById('topicCustom').value.trim()||'结婚到底要不要买房？',
+        proTeam,conTeam,{name:'马东'},mentors
+      );
+      initEmotionEngine();
+      continue;
+    }
+    }
+    // 显示流进度
+    if(step.flowProgress){
+      document.getElementById('flowProgress').textContent=
+        `${step.flowProgress.current}/${step.flowProgress.total}`;
+    }
+    // degraded 提示
+    if(step.degraded)toast(`⚠️ 降级生成（第${step.attemptCount}次尝试）`);
+    document.getElementById('statusBar').classList.remove('show');
+    await renderStep(step);
+    if(done||step.type==='done'){playRunning=false;return}
+    const waitTime=step.type==='vote'?1200:step.type==='battle'?1000:800;
+    await new Promise(r=>setTimeout(r,waitTime));
+    if(useMock&&!skipRequested)currentStepIdx++;
+  }
+  playRunning=false;
+}
+
+// ==================== 辅助函数 ====================
+function getCurrentConfigFromSelects(){
+  const proTeam=[
+    DEBATERS[parseInt(document.getElementById('pro1').value)],
+    DEBATERS[parseInt(document.getElementById('pro2').value)],
+    DEBATERS[parseInt(document.getElementById('pro3').value)]
+  ];
+  const conTeam=[
+    DEBATERS[parseInt(document.getElementById('con1').value)],
+    DEBATERS[parseInt(document.getElementById('con2').value)],
+    DEBATERS[parseInt(document.getElementById('con3').value)]
+  ];
+  const mentorSelect=document.getElementById('mentorSelect');
+  const mentors=[];
+  if(mentorSelect.value!=='')mentors.push(MENTORS[parseInt(mentorSelect.value)]);
+  if(mentors.length===0&&MENTORS.length>=2){mentors.push(MENTORS[0]);mentors.push(MENTORS[1])}
+  return [proTeam,conTeam,mentors];
+}
+
+function setAPIMode(connected){
+  const el=document.getElementById('modeIndicator');
+  if(connected){
+    el.style.cssText='font-size:11px;padding:2px 8px;border-radius:4px;background:rgba(74,222,128,0.2);color:var(--green);display:inline-block';
+    el.textContent='✅ API 已连接';
+  }else{
+    el.style.cssText='font-size:11px;padding:2px 8px;border-radius:4px;background:rgba(248,113,113,0.2);color:var(--red);display:inline-block';
+    el.textContent='⚠️ 模拟数据模式';
+  }
+}
+
+// ==================== 控制函数 ====================
+function togglePause(){
+  paused=!paused;
+  document.getElementById('btnPause').textContent=paused?'▶️ 继续':'⏸️ 暂停';
+  document.getElementById('statusBar').textContent=paused?'⏸️ 已暂停':'⏳ 正在生成...';
+  document.getElementById('statusBar').classList.toggle('show',paused);
+  if(paused){
+    pauseTypewriter();
+  }else{
+    resumeTypewriter();
+    if(!playRunning)playLoop();
+  }
+}
+
+function skipStep(){
+  skipRequested=true;
+  pauseTypewriter();
+  if(paused)togglePause();
+  if(!playRunning)playLoop();
+}
+
+async function startDebate(){
+  const topicEl=document.getElementById('topicSelect');
+  const custom=document.getElementById('topicCustom').value.trim();
+  const topicIndex=topicEl.value!==''?parseInt(topicEl.value):-1;
+  let topic=custom||(topicIndex>=0?TOPICS[topicIndex].title:'');
+  if(!topic){toast('请选择或输入一个辩题');return}
+
+  document.getElementById('btnStart').disabled=true;
+  document.getElementById('btnStart').textContent='🎙️ 辩论中...';
+  document.getElementById('configPanel').classList.add('hidden');
+  document.getElementById('mainLayout').classList.add('show');
+  document.getElementById('debateContent').innerHTML='';
+  document.getElementById('statusBar').classList.remove('show');
+  document.getElementById('actionBar').classList.remove('show');
+  document.getElementById('btnPause').classList.add('show');
+  document.getElementById('btnSkip').classList.add('show');
+  document.getElementById('flowProgress').textContent='';
+  paused=false;currentStepIdx=0;playRunning=false;skipRequested=false;useMock=true;
+  document.getElementById('btnPause').textContent='⏸️ 暂停';
+
+  const proEls=['pro1','pro2','pro3'].map(id=>document.getElementById(id).value);
+  const conEls=['con1','con2','con3'].map(id=>document.getElementById(id).value);
+  const proActive=proEls.every(v=>v!==''&&DEBATERS[parseInt(v)]);
+  const conActive=conEls.every(v=>v!==''&&DEBATERS[parseInt(v)]);
+  const [proTeam,conTeam,mentors]=getCurrentConfigFromSelects();
+
+  // 尝试连接后端
+  if(proActive&&conActive){
+    try{
+      document.getElementById('statusBar').classList.add('show');
+      document.getElementById('statusBar').textContent='⏳ 连接后端...';
+      const body={pro:proEls.map(i=>DEBATERS[parseInt(i)].id),con:conEls.map(i=>DEBATERS[parseInt(i)].id)};
+      if(topicIndex>=0)body.topicIndex=topicIndex;
+      if(custom)body.customTopic=custom;
+      const res=await fetch('/api/session/start',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(body)
+      });
+      const json=await res.json();
+      console.log('[API] /start 返回:', JSON.stringify(json).slice(0,200));
+      if(json.code===200&&json.data&&json.data.sessionId){
+        sessionId=json.data.sessionId;
+        useMock=false;
+        localStorage.setItem('lastSessionId',sessionId);
+        setAPIMode(true);
+        toast('后端已连接，正在生成辩论...');
+      }else throw new Error('API返回异常: code='+json.code);
+    }catch(e){
+      console.error('[API] /start 失败:', e.message);
+      setAPIMode(false);
+      toast(`后端未连接: ${e.message}`);
+    }
+  }
+
+  if(useMock){
+    mockSteps=buildMockSteps(topic,proTeam,conTeam,HOST||{name:'马东'},mentors);
+  }
+  initEmotionEngine();
+  lastInitialVote=null;
+  document.getElementById('statusBar').textContent='⏳ 正在生成...';
+  playLoop();
+}
+
+function exportScript(){
+  const text=document.getElementById('debateContent').innerText;
+  const blob=new Blob([text],{type:'text/plain'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`ai-qipashuo-${new Date().toISOString().slice(0,10)}.txt`;
+  a.click();
+}
+
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2500);
+}
+
+// ==================== 初始化 ====================
+loadData();
+
+// Session 恢复检测
+const savedId=localStorage.getItem('lastSessionId');
+if(savedId){
+  setTimeout(async()=>{
+    try{
+      const res=await fetch(`/api/session/${savedId}/state`);
+      const json=await res.json();
+      if(json.code===200&&json.data&&json.data.status==='RUNNING'){
+        if(confirm(`检测到未完成的辩论（${json.data.topicTitle||''}），是否恢复？`)){
+          sessionId=savedId;useMock=false;
+          document.getElementById('configPanel').classList.add('hidden');
+          document.getElementById('mainLayout').classList.add('show');
+          document.getElementById('btnPause').classList.add('show');
+          document.getElementById('btnSkip').classList.add('show');
+          initEmotionEngine();
+          playLoop();
+        }
+      }
+    }catch(e){/* 后端不在线，忽略 */}
+  },500);
+}
+</script>
+</body>
+</html>

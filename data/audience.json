@@ -1,0 +1,999 @@
+[
+  {
+    "id": 1,
+    "label": "职场妈妈",
+    "tendency": "偏实用主义",
+    "dimensions": [
+      "实用性",
+      "情感共鸣"
+    ],
+    "emotion": {
+      "humor": 0.6,
+      "logic": 0.3,
+      "emotion": 0.9,
+      "aggression": -0.2,
+      "story": 0.8,
+      "novelty": 0.3,
+      "golden": 0.7,
+      "question": 0.2,
+      "exclamation": 0.1,
+      "dash": 0.4,
+      "short": 0.1,
+      "long": 0.3,
+      "life": 0.8,
+      "data": 0.2,
+      "attack": 0.0,
+      "sublime": 0.5
+    },
+    "triggers": {
+      "家庭": 1.0,
+      "孩子": 1.2,
+      "安全感": 0.8,
+      "钱": 0.6,
+      "自由": -0.3
+    }
+  },
+  {
+    "id": 2,
+    "label": "996程序员",
+    "tendency": "偏理性",
+    "dimensions": [
+      "逻辑严密性",
+      "数据支持"
+    ],
+    "emotion": {
+      "humor": 0.3,
+      "logic": 1.0,
+      "emotion": 0.1,
+      "aggression": 0.0,
+      "story": 0.1,
+      "novelty": 0.7,
+      "golden": 0.3,
+      "question": 0.1,
+      "exclamation": 0.2,
+      "dash": 0.0,
+      "short": 0.2,
+      "long": 0.6,
+      "life": 0.3,
+      "data": 0.5,
+      "attack": -0.0,
+      "sublime": 0.2
+    },
+    "triggers": {
+      "效率": 1.0,
+      "自由": 0.8,
+      "钱": 0.5,
+      "数据": 1.2,
+      "故事": -0.3
+    }
+  },
+  {
+    "id": 3,
+    "label": "大学生",
+    "tendency": "偏理想主义",
+    "dimensions": [
+      "观点新颖度",
+      "情感冲击"
+    ],
+    "emotion": {
+      "humor": 0.9,
+      "logic": 0.4,
+      "emotion": 0.8,
+      "aggression": 0.3,
+      "story": 0.7,
+      "novelty": 0.9,
+      "golden": 0.9,
+      "question": 0.4,
+      "exclamation": 0.3,
+      "dash": 0.3,
+      "short": 0.2,
+      "long": 0.3,
+      "life": 0.7,
+      "data": 0.2,
+      "attack": 0.1,
+      "sublime": 0.3
+    },
+    "triggers": {
+      "自由": 1.2,
+      "梦想": 1.2,
+      "爱情": 0.8,
+      "钱": 0.2,
+      "权威": -0.5
+    }
+  },
+  {
+    "id": 4,
+    "label": "退休大爷",
+    "tendency": "偏传统",
+    "dimensions": [
+      "传统价值",
+      "安全感"
+    ],
+    "emotion": {
+      "humor": 0.2,
+      "logic": 0.5,
+      "emotion": 0.8,
+      "aggression": -0.6,
+      "story": 0.9,
+      "novelty": -0.8,
+      "golden": 0.6,
+      "question": 0.1,
+      "exclamation": 0.2,
+      "dash": 0.3,
+      "short": 0.3,
+      "long": 0.3,
+      "life": 0.8,
+      "data": 0.4,
+      "attack": -0.0,
+      "sublime": 0.5
+    },
+    "triggers": {
+      "传统": 1.2,
+      "家": 1.0,
+      "孝顺": 1.0,
+      "潮流": -0.8,
+      "自由": -0.6
+    }
+  },
+  {
+    "id": 5,
+    "label": "创业老板",
+    "tendency": "偏实用主义",
+    "dimensions": [
+      "实际利益",
+      "风险收益"
+    ],
+    "emotion": {
+      "humor": 0.4,
+      "logic": 0.8,
+      "emotion": 0.2,
+      "aggression": 0.5,
+      "story": 0.3,
+      "novelty": 0.6,
+      "golden": 0.4,
+      "question": 0.3,
+      "exclamation": 0.3,
+      "dash": 0.1,
+      "short": 0.5,
+      "long": 0.4,
+      "life": 0.4,
+      "data": 0.3,
+      "attack": 0.3,
+      "sublime": 0.2
+    },
+    "triggers": {
+      "风险": 1.0,
+      "投资": 1.2,
+      "自由": 1.0,
+      "稳定": -0.3,
+      "打工": 0.7
+    }
+  },
+  {
+    "id": 6,
+    "label": "中学老师",
+    "tendency": "偏理性",
+    "dimensions": [
+      "教育意义",
+      "逻辑自洽"
+    ],
+    "emotion": {
+      "humor": 0.5,
+      "logic": 0.9,
+      "emotion": 0.4,
+      "aggression": -0.3,
+      "story": 0.6,
+      "novelty": 0.4,
+      "golden": 0.5,
+      "question": 0.2,
+      "exclamation": 0.1,
+      "dash": 0.2,
+      "short": 0.2,
+      "long": 0.5,
+      "life": 0.7,
+      "data": 0.4,
+      "attack": 0.0,
+      "sublime": 0.3
+    },
+    "triggers": {
+      "教育": 1.2,
+      "分数": 1.0,
+      "成长": 0.8,
+      "叛逆": -0.4
+    }
+  },
+  {
+    "id": 7,
+    "label": "医生",
+    "tendency": "偏理性",
+    "dimensions": [
+      "科学性",
+      "实际效果"
+    ],
+    "emotion": {
+      "humor": 0.3,
+      "logic": 1.0,
+      "emotion": 0.2,
+      "aggression": 0.0,
+      "story": 0.2,
+      "novelty": 0.3,
+      "golden": 0.2,
+      "question": 0.1,
+      "exclamation": 0.1,
+      "dash": 0.1,
+      "short": 0.3,
+      "long": 0.6,
+      "life": 0.3,
+      "data": 0.5,
+      "attack": 0.0,
+      "sublime": 0.2
+    },
+    "triggers": {
+      "健康": 1.2,
+      "证据": 1.0,
+      "科学": 1.0,
+      "情感": -0.2
+    }
+  },
+  {
+    "id": 8,
+    "label": "自媒体博主",
+    "tendency": "偏感性",
+    "dimensions": [
+      "传播力",
+      "情绪价值"
+    ],
+    "emotion": {
+      "humor": 0.9,
+      "logic": 0.2,
+      "emotion": 0.9,
+      "aggression": 0.6,
+      "story": 0.8,
+      "novelty": 0.8,
+      "golden": 1.0,
+      "question": 0.3,
+      "exclamation": 0.4,
+      "dash": 0.4,
+      "short": 0.4,
+      "long": 0.2,
+      "life": 0.7,
+      "data": 0.2,
+      "attack": 0.5,
+      "sublime": 0.2
+    },
+    "triggers": {
+      "爆款": 1.0,
+      "共鸣": 1.2,
+      "反转": 0.9,
+      "说教": -0.8
+    }
+  },
+  {
+    "id": 9,
+    "label": "小学生",
+    "tendency": "偏感性",
+    "dimensions": [
+      "好不好玩",
+      "公不公平"
+    ],
+    "emotion": {
+      "humor": 1.0,
+      "logic": 0.1,
+      "emotion": 0.7,
+      "aggression": -0.5,
+      "story": 0.9,
+      "novelty": 0.8,
+      "golden": 0.7,
+      "question": 0.3,
+      "exclamation": 0.2,
+      "dash": 0.3,
+      "short": 0.2,
+      "long": 0.1,
+      "life": 0.8,
+      "data": 0.1,
+      "attack": -0.1,
+      "sublime": 0.4
+    },
+    "triggers": {
+      "玩": 1.2,
+      "公平": 1.0,
+      "作业": -0.8,
+      "大人": -0.5
+    }
+  },
+  {
+    "id": 10,
+    "label": "全职爸爸",
+    "tendency": "偏感性",
+    "dimensions": [
+      "家庭价值",
+      "生活体验"
+    ],
+    "emotion": {
+      "humor": 0.7,
+      "logic": 0.4,
+      "emotion": 0.9,
+      "aggression": -0.3,
+      "story": 0.9,
+      "novelty": 0.3,
+      "golden": 0.7,
+      "question": 0.4,
+      "exclamation": 0.1,
+      "dash": 0.4,
+      "short": 0.2,
+      "long": 0.2,
+      "life": 0.7,
+      "data": 0.3,
+      "attack": 0.0,
+      "sublime": 0.4
+    },
+    "triggers": {
+      "家庭": 1.2,
+      "孩子": 1.2,
+      "婚姻": 1.0,
+      "事业": 0.3
+    }
+  },
+  {
+    "id": 11,
+    "label": "外卖骑手",
+    "tendency": "偏实用主义",
+    "dimensions": [
+      "实际利益",
+      "时间成本"
+    ],
+    "emotion": {
+      "humor": 0.5,
+      "logic": 0.5,
+      "emotion": 0.5,
+      "aggression": 0.2,
+      "story": 0.6,
+      "novelty": 0.3,
+      "golden": 0.5,
+      "question": 0.3,
+      "exclamation": 0.2,
+      "dash": 0.3,
+      "short": 0.3,
+      "long": 0.3,
+      "life": 0.6,
+      "data": 0.2,
+      "attack": 0.1,
+      "sublime": 0.1
+    },
+    "triggers": {
+      "钱": 1.2,
+      "时间": 1.0,
+      "辛苦": 0.9,
+      "梦想": -0.3
+    }
+  },
+  {
+    "id": 12,
+    "label": "高中生",
+    "tendency": "偏理想主义",
+    "dimensions": [
+      "酷不酷",
+      "有没有道理"
+    ],
+    "emotion": {
+      "humor": 0.8,
+      "logic": 0.5,
+      "emotion": 0.7,
+      "aggression": 0.4,
+      "story": 0.5,
+      "novelty": 0.9,
+      "golden": 0.8,
+      "question": 0.4,
+      "exclamation": 0.3,
+      "dash": 0.3,
+      "short": 0.3,
+      "long": 0.4,
+      "life": 0.5,
+      "data": 0.2,
+      "attack": 0.3,
+      "sublime": 0.2
+    },
+    "triggers": {
+      "自由": 1.2,
+      "酷": 1.0,
+      "梦想": 0.9,
+      "考试": -0.6
+    }
+  },
+  {
+    "id": 13,
+    "label": "心理咨询师",
+    "tendency": "偏感性",
+    "dimensions": [
+      "心理健康",
+      "情感合理性"
+    ],
+    "emotion": {
+      "humor": 0.5,
+      "logic": 0.6,
+      "emotion": 0.9,
+      "aggression": -0.4,
+      "story": 0.8,
+      "novelty": 0.5,
+      "golden": 0.6,
+      "question": 0.2,
+      "exclamation": 0.2,
+      "dash": 0.3,
+      "short": 0.3,
+      "long": 0.3,
+      "life": 0.7,
+      "data": 0.4,
+      "attack": -0.1,
+      "sublime": 0.6
+    },
+    "triggers": {
+      "情绪": 1.2,
+      "创伤": 1.0,
+      "成长": 0.9,
+      "指责": -0.7
+    }
+  },
+  {
+    "id": 14,
+    "label": "律师",
+    "tendency": "偏理性",
+    "dimensions": [
+      "证据链",
+      "逻辑漏洞"
+    ],
+    "emotion": {
+      "humor": 0.3,
+      "logic": 1.0,
+      "emotion": 0.1,
+      "aggression": 0.7,
+      "story": 0.1,
+      "novelty": 0.5,
+      "golden": 0.2,
+      "question": 0.3,
+      "exclamation": 0.5,
+      "dash": 0.1,
+      "short": 0.5,
+      "long": 0.7,
+      "life": 0.4,
+      "data": 0.5,
+      "attack": 0.4,
+      "sublime": 0.3
+    },
+    "triggers": {
+      "证据": 1.2,
+      "漏洞": 1.0,
+      "规则": 0.8,
+      "煽情": -0.6
+    }
+  },
+  {
+    "id": 15,
+    "label": "网红主播",
+    "tendency": "偏感性",
+    "dimensions": [
+      "综艺效果",
+      "观众反应"
+    ],
+    "emotion": {
+      "humor": 0.9,
+      "logic": 0.1,
+      "emotion": 0.8,
+      "aggression": 0.5,
+      "story": 0.7,
+      "novelty": 0.8,
+      "golden": 0.9,
+      "question": 0.4,
+      "exclamation": 0.3,
+      "dash": 0.4,
+      "short": 0.3,
+      "long": 0.1,
+      "life": 0.6,
+      "data": 0.0,
+      "attack": 0.3,
+      "sublime": 0.2
+    },
+    "triggers": {
+      "热度": 1.0,
+      "共鸣": 1.0,
+      "反转": 0.8,
+      "无聊": -1.0
+    }
+  },
+  {
+    "id": 16,
+    "label": "退休教师",
+    "tendency": "偏传统",
+    "dimensions": [
+      "教育价值",
+      "道德判断"
+    ],
+    "emotion": {
+      "humor": 0.4,
+      "logic": 0.8,
+      "emotion": 0.5,
+      "aggression": -0.5,
+      "story": 0.7,
+      "novelty": -0.3,
+      "golden": 0.5,
+      "question": 0.3,
+      "exclamation": 0.1,
+      "dash": 0.3,
+      "short": 0.3,
+      "long": 0.5,
+      "life": 0.7,
+      "data": 0.5,
+      "attack": -0.0,
+      "sublime": 0.4
+    },
+    "triggers": {
+      "教育": 1.2,
+      "道德": 1.0,
+      "传统": 1.0,
+      "叛逆": -0.8
+    }
+  },
+  {
+    "id": 17,
+    "label": "数据工程师",
+    "tendency": "偏理性",
+    "dimensions": [
+      "数据支撑",
+      "统计显著性"
+    ],
+    "emotion": {
+      "humor": 0.2,
+      "logic": 1.0,
+      "emotion": 0.0,
+      "aggression": 0.1,
+      "story": 0.0,
+      "novelty": 0.6,
+      "golden": 0.1,
+      "question": 0.2,
+      "exclamation": 0.1,
+      "dash": 0.0,
+      "short": 0.3,
+      "long": 0.6,
+      "life": 0.4,
+      "data": 0.5,
+      "attack": 0.0,
+      "sublime": 0.1
+    },
+    "triggers": {
+      "数据": 1.2,
+      "统计": 1.0,
+      "科学": 0.8,
+      "感觉": -0.9
+    }
+  },
+  {
+    "id": 18,
+    "label": "绘本作家",
+    "tendency": "偏感性",
+    "dimensions": [
+      "故事性",
+      "想象力"
+    ],
+    "emotion": {
+      "humor": 0.6,
+      "logic": 0.3,
+      "emotion": 0.9,
+      "aggression": -0.5,
+      "story": 1.0,
+      "novelty": 0.8,
+      "golden": 0.8,
+      "question": 0.3,
+      "exclamation": 0.0,
+      "dash": 0.4,
+      "short": 0.2,
+      "long": 0.2,
+      "life": 0.9,
+      "data": 0.3,
+      "attack": -0.1,
+      "sublime": 0.5
+    },
+    "triggers": {
+      "故事": 1.2,
+      "想象力": 1.0,
+      "美好": 0.9,
+      "功利": -0.7
+    }
+  },
+  {
+    "id": 19,
+    "label": "健身教练",
+    "tendency": "偏实用主义",
+    "dimensions": [
+      "行动力",
+      "实际改变"
+    ],
+    "emotion": {
+      "humor": 0.5,
+      "logic": 0.4,
+      "emotion": 0.3,
+      "aggression": 0.6,
+      "story": 0.4,
+      "novelty": 0.4,
+      "golden": 0.5,
+      "question": 0.3,
+      "exclamation": 0.3,
+      "dash": 0.2,
+      "short": 0.4,
+      "long": 0.3,
+      "life": 0.6,
+      "data": 0.2,
+      "attack": 0.3,
+      "sublime": 0.2
+    },
+    "triggers": {
+      "行动": 1.2,
+      "改变": 1.0,
+      "坚持": 0.9,
+      "借口": -0.8
+    }
+  },
+  {
+    "id": 20,
+    "label": "厨师",
+    "tendency": "偏实用主义",
+    "dimensions": [
+      "好不好吃",
+      "实不实惠"
+    ],
+    "emotion": {
+      "humor": 0.7,
+      "logic": 0.4,
+      "emotion": 0.5,
+      "aggression": 0.0,
+      "story": 0.6,
+      "novelty": 0.4,
+      "golden": 0.5,
+      "question": 0.4,
+      "exclamation": 0.1,
+      "dash": 0.2,
+      "short": 0.2,
+      "long": 0.3,
+      "life": 0.5,
+      "data": 0.2,
+      "attack": -0.0,
+      "sublime": 0.2
+    },
+    "triggers": {
+      "好吃": 1.2,
+      "实惠": 1.0,
+      "本味": 0.8,
+      "装": -0.6
+    }
+  },
+  {
+    "id": 21,
+    "label": "佛系青年",
+    "tendency": "偏随性",
+    "dimensions": [
+      "累不累",
+      "值不值"
+    ],
+    "emotion": {
+      "humor": 0.8,
+      "logic": 0.4,
+      "emotion": 0.5,
+      "aggression": -0.8,
+      "story": 0.6,
+      "novelty": 0.6,
+      "golden": 0.6,
+      "question": 0.3,
+      "exclamation": 0.0,
+      "dash": 0.2,
+      "short": 0.1,
+      "long": 0.2,
+      "life": 0.6,
+      "data": 0.2,
+      "attack": 0.1,
+      "sublime": 0.6
+    },
+    "triggers": {
+      "算了": 1.2,
+      "不重要": 1.0,
+      "随意": 0.9,
+      "输赢": -0.7,
+      "卷": -0.9
+    }
+  },
+  {
+    "id": 22,
+    "label": "房产中介",
+    "tendency": "偏实用主义",
+    "dimensions": [
+      "市场价值",
+      "实际收益"
+    ],
+    "emotion": {
+      "humor": 0.4,
+      "logic": 0.7,
+      "emotion": 0.3,
+      "aggression": 0.3,
+      "story": 0.5,
+      "novelty": 0.3,
+      "golden": 0.4,
+      "question": 0.2,
+      "exclamation": 0.2,
+      "dash": 0.2,
+      "short": 0.3,
+      "long": 0.4,
+      "life": 0.6,
+      "data": 0.3,
+      "attack": 0.2,
+      "sublime": 0.1
+    },
+    "triggers": {
+      "房子": 1.2,
+      "投资": 1.0,
+      "地段": 1.0,
+      "风险": 0.6
+    }
+  },
+  {
+    "id": 23,
+    "label": "流浪歌手",
+    "tendency": "偏理想主义",
+    "dimensions": [
+      "自由度",
+      "浪漫感"
+    ],
+    "emotion": {
+      "humor": 0.6,
+      "logic": 0.2,
+      "emotion": 0.9,
+      "aggression": -0.6,
+      "story": 0.9,
+      "novelty": 0.8,
+      "golden": 0.8,
+      "question": 0.3,
+      "exclamation": 0.0,
+      "dash": 0.4,
+      "short": 0.2,
+      "long": 0.3,
+      "life": 0.8,
+      "data": 0.2,
+      "attack": 0.0,
+      "sublime": 0.5
+    },
+    "triggers": {
+      "自由": 1.2,
+      "梦想": 1.2,
+      "音乐": 1.0,
+      "稳定": -0.8,
+      "工资": -0.6
+    }
+  },
+  {
+    "id": 24,
+    "label": "金融分析师",
+    "tendency": "偏理性",
+    "dimensions": [
+      "风险收益",
+      "数学模型"
+    ],
+    "emotion": {
+      "humor": 0.2,
+      "logic": 1.0,
+      "emotion": 0.0,
+      "aggression": 0.4,
+      "story": 0.0,
+      "novelty": 0.4,
+      "golden": 0.1,
+      "question": 0.2,
+      "exclamation": 0.4,
+      "dash": 0.0,
+      "short": 0.4,
+      "long": 0.6,
+      "life": 0.2,
+      "data": 0.5,
+      "attack": 0.2,
+      "sublime": 0.3
+    },
+    "triggers": {
+      "风险": 1.2,
+      "收益": 1.0,
+      "模型": 1.0,
+      "感觉": -1.0
+    }
+  },
+  {
+    "id": 25,
+    "label": "新婚夫妇",
+    "tendency": "偏感性",
+    "dimensions": [
+      "情感价值",
+      "长期规划"
+    ],
+    "emotion": {
+      "humor": 0.6,
+      "logic": 0.5,
+      "emotion": 0.9,
+      "aggression": -0.3,
+      "story": 0.8,
+      "novelty": 0.4,
+      "golden": 0.7,
+      "question": 0.4,
+      "exclamation": 0.1,
+      "dash": 0.4,
+      "short": 0.2,
+      "long": 0.3,
+      "life": 0.6,
+      "data": 0.3,
+      "attack": -0.1,
+      "sublime": 0.4
+    },
+    "triggers": {
+      "婚姻": 1.2,
+      "爱": 1.2,
+      "未来": 0.9,
+      "离婚": -0.8
+    }
+  },
+  {
+    "id": 26,
+    "label": "考研党",
+    "tendency": "偏理性",
+    "dimensions": [
+      "效率",
+      "努力回报"
+    ],
+    "emotion": {
+      "humor": 0.4,
+      "logic": 0.8,
+      "emotion": 0.4,
+      "aggression": 0.0,
+      "story": 0.3,
+      "novelty": 0.5,
+      "golden": 0.4,
+      "question": 0.3,
+      "exclamation": 0.1,
+      "dash": 0.3,
+      "short": 0.1,
+      "long": 0.4,
+      "life": 0.4,
+      "data": 0.4,
+      "attack": -0.0,
+      "sublime": 0.3
+    },
+    "triggers": {
+      "努力": 1.2,
+      "成功": 1.0,
+      "分数": 0.9,
+      "躺平": -0.8
+    }
+  },
+  {
+    "id": 27,
+    "label": "空巢老人",
+    "tendency": "偏感性",
+    "dimensions": [
+      "情感需求",
+      "陪伴价值"
+    ],
+    "emotion": {
+      "humor": 0.3,
+      "logic": 0.3,
+      "emotion": 1.0,
+      "aggression": -0.7,
+      "story": 0.9,
+      "novelty": -0.5,
+      "golden": 0.7,
+      "question": 0.2,
+      "exclamation": 0.0,
+      "dash": 0.4,
+      "short": 0.2,
+      "long": 0.3,
+      "life": 0.7,
+      "data": 0.2,
+      "attack": 0.1,
+      "sublime": 0.7
+    },
+    "triggers": {
+      "陪伴": 1.2,
+      "家": 1.2,
+      "孩子": 1.2,
+      "孤独": -1.0
+    }
+  },
+  {
+    "id": 28,
+    "label": "网约车司机",
+    "tendency": "偏实用主义",
+    "dimensions": [
+      "实际收入",
+      "时间自由"
+    ],
+    "emotion": {
+      "humor": 0.6,
+      "logic": 0.4,
+      "emotion": 0.4,
+      "aggression": 0.1,
+      "story": 0.7,
+      "novelty": 0.3,
+      "golden": 0.5,
+      "question": 0.4,
+      "exclamation": 0.1,
+      "dash": 0.3,
+      "short": 0.3,
+      "long": 0.3,
+      "life": 0.6,
+      "data": 0.3,
+      "attack": 0.0,
+      "sublime": 0.3
+    },
+    "triggers": {
+      "钱": 1.2,
+      "时间": 1.0,
+      "油钱": 0.8,
+      "梦想": -0.2
+    }
+  },
+  {
+    "id": 29,
+    "label": "AI 研究员",
+    "tendency": "偏理性",
+    "dimensions": [
+      "逻辑一致性",
+      "创新性"
+    ],
+    "emotion": {
+      "humor": 0.3,
+      "logic": 1.0,
+      "emotion": 0.1,
+      "aggression": 0.2,
+      "story": 0.1,
+      "novelty": 0.9,
+      "golden": 0.3,
+      "question": 0.3,
+      "exclamation": 0.2,
+      "dash": 0.2,
+      "short": 0.2,
+      "long": 0.7,
+      "life": 0.3,
+      "data": 0.5,
+      "attack": 0.1,
+      "sublime": 0.1
+    },
+    "triggers": {
+      "AI": 1.2,
+      "创新": 1.0,
+      "技术": 0.8,
+      "情怀": -0.5
+    }
+  },
+  {
+    "id": 30,
+    "label": "退休公务员",
+    "tendency": "偏传统",
+    "dimensions": [
+      "稳定性",
+      "社会价值"
+    ],
+    "emotion": {
+      "humor": 0.3,
+      "logic": 0.7,
+      "emotion": 0.4,
+      "aggression": -0.5,
+      "story": 0.5,
+      "novelty": -0.5,
+      "golden": 0.4,
+      "question": 0.2,
+      "exclamation": 0.1,
+      "dash": 0.2,
+      "short": 0.1,
+      "long": 0.5,
+      "life": 0.6,
+      "data": 0.4,
+      "attack": -0.0,
+      "sublime": 0.5
+    },
+    "triggers": {
+      "稳定": 1.2,
+      "规则": 1.0,
+      "秩序": 0.9,
+      "随便": -0.7
+    }
+  }
+]
