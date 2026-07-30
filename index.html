@@ -3,246 +3,490 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>AI 的夏天</title>
+<title>AI CAN BB — AI的夏天</title>
 <style>
-:root{
-  --bg:#0f0a1a;
-  --bg2:#1a1333;
-  --bg3:#252045;
-  --text:#e0d6ff;
-  --muted:#8b7fb3;
-  --gold:#d4a843;
-  --pro:#7f77dd;
-  --con:#d85a30;
-  --green:#4ade80;
-  --red:#f87171;
-  --border:#2a2450;
-  --radius:12px;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-body{
-  font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
-  background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;
-}
-.container{max-width:1300px;margin:0 auto;padding:20px}
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&display=swap');
 
-/* header */
-header{text-align:center;padding:20px 0 12px;position:relative}
-header h1{font-size:34px;color:var(--gold);letter-spacing:3px}
-header .sub{color:var(--muted);font-size:14px;margin-top:4px}
-.ctrl-bar{display:flex;justify-content:center;gap:12px;margin-top:8px;min-height:32px}
-.btn-ctrl{
-  padding:6px 16px;border:1px solid var(--border);border-radius:6px;
-  background:var(--bg2);color:var(--text);cursor:pointer;font-size:13px;
-  display:none;align-items:center;gap:6px
-}
-.btn-ctrl:hover{border-color:var(--gold)}
-.btn-ctrl.show{display:inline-flex}
-
-/* config panel */
-.config{background:var(--bg2);border-radius:var(--radius);padding:20px;border:1px solid var(--border);margin-bottom:16px}
-.config.hidden{display:none}
-.row{display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
-.row label{min-width:70px;font-size:14px;color:var(--muted);flex-shrink:0}
-.row select,.row input{flex:1;min-width:120px;padding:7px 10px;border-radius:6px;border:1px solid var(--border);
-  background:var(--bg3);color:var(--text);font-size:14px}
-.row select:focus,.row input:focus{outline:none;border-color:var(--pro)}
-.vs-badge{font-size:18px;color:var(--gold);font-weight:700;padding:0 10px}
-.multi-label{font-size:13px;color:var(--muted);margin-left:4px}
-.btn-start{
-  display:block;width:100%;max-width:260px;margin:16px auto 0;padding:12px 0;
-  font-size:16px;font-weight:700;background:linear-gradient(135deg,var(--pro),var(--gold));
-  color:#fff;border:none;border-radius:var(--radius);cursor:pointer;letter-spacing:4px;
-  transition:opacity .2s
-}
-.btn-start:hover{opacity:.9}
-.btn-start:disabled{opacity:.4;cursor:not-allowed}
-
-/* main layout */
-.main-layout{display:none;gap:24px;margin-top:0}
-.main-layout.show{display:flex}
-.debate-area{flex:1;min-width:0}
-.sidebar{width:280px;flex-shrink:0;display:flex;flex-direction:column;gap:14px}
-
-/* debate stage */
-.stage{
-  background:var(--bg2);border-radius:var(--radius);padding:24px;
-  border:1px solid var(--border);height:calc(100vh - 210px);min-height:300px;overflow-y:auto
-}
-.stage::-webkit-scrollbar{width:4px}
-.stage::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-.stage-empty{text-align:center;color:var(--muted);padding:80px 0;font-size:15px}
-.step-label{font-size:11px;color:var(--pro);margin-bottom:10px;font-weight:500;text-transform:uppercase;letter-spacing:1px}
-
-/* host */
-.host-line{text-align:center;color:var(--gold);font-size:17px;margin:14px 0;font-style:italic;line-height:2.0}
-
-/* speech bubbles */
-.speech{max-width:82%;margin-bottom:16px;padding:16px 20px;border-radius:var(--radius);font-size:17px;line-height:2.0;opacity:0;animation:fadeIn .3s forwards}
-.speech.pro{background:var(--bg3);border:1px solid var(--border);margin-right:auto;border-left:3px solid var(--pro)}
-.speech.con{background:var(--bg3);border:1px solid var(--border);margin-left:auto;border-right:3px solid var(--con)}
-.speech .badge{font-size:13px;color:var(--muted);margin-bottom:4px;font-weight:500}
-@keyframes fadeIn{to{opacity:1}}
-
-/* battle */
-.battle-wrap{display:flex;gap:14px;margin-bottom:16px;min-height:140px;position:relative}
-.battle-round{position:absolute;top:-18px;left:50%;transform:translateX(-50%);
-  font-size:13px;color:var(--muted);background:var(--bg);padding:0 8px;z-index:2}
-.battle-side{flex:1;padding:14px 16px;border-radius:var(--radius);font-size:16px;line-height:1.9;
-  background:var(--bg3);border:2px solid var(--border);transition:all .4s;opacity:.4;position:relative;overflow:hidden}
-.battle-side.active{opacity:1;border-color:var(--gold);transform:scale(1.02);box-shadow:0 0 20px rgba(212,168,67,.3)}
-.battle-side .b-name{font-size:14px;font-weight:600;margin-bottom:6px}
-.battle-side .b-side{font-size:11px;color:var(--muted);margin-bottom:4px}
-.battle-timer{position:absolute;bottom:0;left:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--pro));
-  transition:width 6s linear;width:100%;border-radius:0 0 8px 8px}
-.battle-side.active .battle-timer{width:0%}
-
-/* vote */
-.vote-box{margin:16px 0;background:var(--bg3);border-radius:8px;padding:16px 20px}
-.vote-title{font-size:14px;color:var(--muted);margin-bottom:10px;text-align:center}
-
-/* sway */
-.sway-card{
-  background:var(--bg3);border-left:3px solid var(--gold);padding:12px 16px;
-  margin:8px 0;border-radius:6px;font-size:13px;line-height:1.7;opacity:0;animation:fadeIn .3s forwards
-}
-.sway-card .s-label{color:var(--gold);font-weight:500}
-.sway-card .s-dir{color:var(--muted);font-size:11px}
-
-/* mentor */
-.mentor-card{
-  background:var(--bg3);padding:16px 20px;margin:12px 0;border-radius:var(--radius);
-  border:1px solid var(--border);font-size:16px;line-height:1.9
-}
-.mentor-card .m-name{font-weight:600;color:var(--gold);margin-bottom:6px;font-size:16px}
-
-/* sidebar */
-.panel{background:var(--bg2);border-radius:var(--radius);padding:14px;border:1px solid var(--border)}
-.panel-title{font-size:13px;color:var(--muted);margin-bottom:8px;font-weight:500;letter-spacing:1px}
-
-/* 观众席 */
-.auditorium{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:8px;background:var(--bg);border-radius:8px}
-.seat{position:relative;display:flex;flex-direction:column;align-items:center;padding:5px 3px;
-  border-radius:6px;background:var(--bg3);cursor:default;transition:all .3s;min-height:46px}
-.seat .s-emoji{font-size:26px;line-height:1;transition:transform .3s;display:block}
-.seat .s-label{font-size:8px;color:var(--muted);line-height:1;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;text-align:center}
-.seat:hover{background:var(--border);z-index:5}
-.seat:hover .s-emoji{transform:scale(1.4)}
-.seat:hover .s-label{color:var(--text);font-size:8px}
-.seat.pulse .s-emoji{animation:seatPop .4s ease}
-@keyframes seatPop{0%{transform:scale(.8)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
-.seat-progress{font-size:11px;color:var(--muted);text-align:center;margin-top:6px;padding-top:4px;border-top:1px solid var(--border)}
-
-/* 实时投票拉锯条 */
-.vote-bar-container{position:relative;height:44px;margin:6px 0 10px;border-radius:8px;overflow:hidden;background:var(--bg)}
-.vote-half{position:absolute;top:0;height:100%;transition:width .6s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;justify-content:center}
-.vote-half.pro{left:0;background:linear-gradient(90deg,rgba(127,119,221,.6),rgba(127,119,221,.3));border-right:2px solid var(--pro);border-radius:8px 0 0 8px}
-.vote-half.con{right:0;background:linear-gradient(270deg,rgba(216,90,48,.6),rgba(216,90,48,.3));border-left:2px solid var(--con);border-radius:0 8px 8px 0}
-.vote-half .v-label{font-size:16px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5)}
-.vote-half .v-num{font-size:15px;color:rgba(255,255,255,.8);margin:0 4px}
-.vote-info{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);padding:0 2px}
-.vote-initial{font-size:11px;color:var(--muted);text-align:center;margin-bottom:2px}
-/* status & toast */
-.status-bar{font-size:14px;color:var(--muted);text-align:center;padding:6px;display:none}
-.status-bar.show{display:block;animation:pulse 1.2s infinite}
-@keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
-.actions{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap;display:none}
-.actions.show{display:flex}
-.btn{padding:8px 18px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);
-  color:var(--text);cursor:pointer;font-size:13px;transition:border-color .2s}
-.btn:hover{border-color:var(--gold)}
-.btn-skip{padding:4px 12px;border:1px solid var(--red);border-radius:6px;background:transparent;
-  color:var(--red);cursor:pointer;font-size:11px;margin-top:6px;display:none}
-.btn-skip.show{display:inline-block}
-.toast{
-  position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);
-  background:var(--bg2);color:var(--text);padding:10px 24px;border-radius:20px;
-  font-size:14px;border:1px solid var(--gold);
-  opacity:0;transition:opacity .3s,transform .3s;z-index:100;pointer-events:none
-}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-/* responsive */
-@media(max-width:768px){
-  .main-layout.show{flex-direction:column}
-  .sidebar{width:100%;flex-direction:row;flex-wrap:wrap}
-  .panel{flex:1;min-width:140px}
-  .speech{max-width:90%}
-  .battle-wrap{flex-direction:column}
-  .container{padding:10px}
-  header h1{font-size:22px}
-  .config{padding:14px}
-  .stage{padding:14px;max-height:450px}
-  .row label{min-width:60px;font-size:12px}
-  .btn-start{max-width:100%}
+:root {
+  --yellow: #FFD600;
+  --red: #FF3B30;
+  --blue: #007AFF;
+  --teal: #00C7B7;
+  --dark: #1a1a1a;
+  --cream: #FFF8E1;
+  --pro: #007AFF;
+  --con: #FF3B30;
 }
 
-/* 打字机光标 */
-.typing-cursor::after{content:'|';animation:blink .7s infinite;color:var(--gold);font-weight:300}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Sans SC', sans-serif;
+  background: var(--yellow);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* 砖墙背景 */
+.brick-wall {
+  background-image:
+    linear-gradient(335deg, rgba(0,0,0,0.08) 23px, transparent 23px),
+    linear-gradient(155deg, rgba(0,0,0,0.08) 23px, transparent 23px),
+    linear-gradient(335deg, rgba(0,0,0,0.08) 23px, transparent 23px),
+    linear-gradient(155deg, rgba(0,0,0,0.08) 23px, transparent 23px);
+  background-size: 58px 58px;
+  background-color: var(--yellow);
+}
+
+/* 装饰齿轮 */
+.gear {
+  position: fixed;
+  font-size: 40px;
+  opacity: 0.12;
+  pointer-events: none;
+  z-index: 0;
+  animation: spin 20s linear infinite;
+}
+.gear:nth-child(1) { top: 10px; left: 10px; }
+.gear:nth-child(2) { top: 60px; right: 20px; animation-duration: 25s; animation-direction: reverse; }
+.gear:nth-child(3) { bottom: 40px; left: 30px; animation-duration: 30s; }
+.gear:nth-child(4) { bottom: 100px; right: 10px; animation-duration: 18s; animation-direction: reverse; }
+
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* ===== 标题 ===== */
+.header {
+  position: relative; z-index: 10;
+  padding: 16px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 10px;
+}
+.logo {
+  font-size: 48px; font-weight: 900; color: var(--red);
+  text-shadow:
+    3px 3px 0 var(--dark), -1px -1px 0 var(--dark),
+    1px -1px 0 var(--dark), -1px 1px 0 var(--dark),
+    4px 4px 0 rgba(0,0,0,0.2);
+  letter-spacing: -2px; line-height: 1;
+}
+.logo-reg { font-size: 14px; vertical-align: super; color: var(--dark); text-shadow: none; }
+.tag-ai-summer {
+  background: var(--teal); color: white; font-weight: 900; font-size: 18px;
+  padding: 6px 18px; border: 3px solid var(--dark); box-shadow: 4px 4px 0 var(--dark);
+  transform: rotate(-2deg);
+}
+.ctrl-bar {
+  background: var(--dark); color: white; padding: 8px 16px;
+  display: none; align-items: center; gap: 12px; flex-wrap: wrap;
+  border: 3px solid var(--dark); box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
+  position: relative; z-index: 10; margin: 0 20px;
+}
+.ctrl-bar.show { display: flex; }
+.ctrl-btn {
+  background: var(--cream); color: var(--dark); font-weight: 900; font-size: 13px;
+  padding: 6px 16px; border: 3px solid var(--dark); cursor: pointer;
+  box-shadow: 3px 3px 0 var(--dark); transition: all 0.1s;
+}
+.ctrl-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--dark); }
+.ctrl-btn:active { transform: translate(3px,3px); box-shadow: none; }
+.ctrl-btn.show { display: inline-flex; }
+
+/* 状态栏 */
+.status-bar {
+  background: var(--dark); color: var(--yellow); text-align: center;
+  font-weight: 900; font-size: 13px; padding: 8px; display: none;
+  border: 3px solid var(--dark); box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
+  position: relative; z-index: 5;
+}
+.status-bar.show { display: block; }
+.status-bar.paused { color: #999; }
+.ctrl-progress { color: rgba(255,255,255,0.6); font-size: 12px; font-weight: 700; }
+.ctrl-mode {
+  font-size: 11px; font-weight: 900; padding: 3px 10px;
+  border: 2px solid currentColor; border-radius: 3px; margin-left: auto;
+}
+
+/* ===== 卡片通用 ===== */
+.card {
+  background: var(--cream);
+  border: 4px solid var(--dark);
+  box-shadow: 6px 6px 0 var(--dark);
+  border-radius: 4px;
+  position: relative; z-index: 5;
+}
+.card-header {
+  background: var(--dark); color: white; font-weight: 900;
+  padding: 6px 16px; font-size: 14px; letter-spacing: 2px; text-align: center;
+}
+
+/* ===== 配置面板 ===== */
+.config-section { margin: 0 20px 16px; padding: 20px; }
+.config-section.hidden { display: none; }
+
+.topic-row { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.topic-row select, .topic-row input {
+  flex: 1; min-width: 180px; padding: 10px 14px;
+  border: 3px solid var(--dark); font-size: 15px; font-weight: 700;
+  background: white; outline: none;
+}
+.topic-row input::placeholder { color: #999; }
+
+.teams-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;
+}
+@media (max-width:768px) { .teams-row { grid-template-columns: 1fr; } }
+.team-box { border: 4px solid var(--dark); background: white; box-shadow: 4px 4px 0 var(--dark); }
+.team-header { font-weight: 900; font-size: 18px; padding: 8px; text-align: center; color: white; border-bottom: 4px solid var(--dark); }
+.team-pro .team-header { background: var(--teal); }
+.team-con .team-header { background: var(--red); }
+.team-opts { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+.team-opts select {
+  width: 100%; padding: 8px 10px; border: 3px solid var(--dark);
+  font-weight: 700; font-size: 13px; background: #f8f8f8; outline: none;
+}
+.team-opts label { font-size: 11px; font-weight: 900; color: #666; letter-spacing: 1px; }
+
+.host-row { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 16px; }
+.host-group { display: flex; flex-direction: column; gap: 4px; }
+.host-group label { font-size: 11px; font-weight: 900; color: var(--dark); letter-spacing: 1px; }
+.host-group select {
+  padding: 8px 12px; border: 3px solid var(--dark); font-weight: 700;
+  background: white; min-width: 140px; font-size: 13px;
+}
+
+.start-btn {
+  flex: 1; min-width: 200px;
+  background: var(--red); color: white;
+  font-size: 24px; font-weight: 900; padding: 14px;
+  border: 4px solid var(--dark); box-shadow: 6px 6px 0 var(--dark);
+  cursor: pointer; transition: all 0.1s;
+  letter-spacing: 2px;
+}
+.start-btn:hover { transform: translate(-2px,-2px); box-shadow: 8px 8px 0 var(--dark); }
+.start-btn:active { transform: translate(4px,4px); box-shadow: 0 0 0 var(--dark); }
+.start-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: 4px 4px 0 var(--dark); }
+
+/* ===== 主舞台 ===== */
+.stage-layout {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 0 20px 20px;
+  position: relative; z-index: 5;
+}
+.stage-layout.hidden { display: none; }
+
+.main-stage { flex: 1; min-width: 0; }
+.sidebar { flex: 0 0 280px; display: flex; flex-direction: column; gap: 10px; }
+
+.topic-banner {
+  background: var(--dark); color: white; text-align: center; padding: 12px;
+  font-weight: 900; font-size: 16px;
+  border: 4px solid var(--dark); box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+  position: relative; z-index: 5;
+}
+
+.speech-box {
+  background: var(--cream);
+  border: 4px solid var(--dark);
+  box-shadow: 6px 6px 0 var(--dark);
+  padding: 16px;
+  height: calc(100vh - 240px);
+  min-height: 350px;
+  overflow-y: auto;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.speech-box::-webkit-scrollbar { width: 10px; }
+.speech-box::-webkit-scrollbar-track { background: #f0f0f0; }
+.speech-box::-webkit-scrollbar-thumb { background: var(--dark); }
+
+/* 发言样式 */
+.speech-moderator { text-align: center; font-style: italic; color: #666; font-weight: 700; padding: 6px; }
+
+.speech-bubble {
+  max-width: 85%; padding: 10px 14px;
+  border: 3px solid var(--dark); position: relative;
+  font-size: 15px; line-height: 1.6; font-weight: 700;
+}
+.speech-bubble::before {
+  content: ''; position: absolute;
+  width: 0; height: 0; border: 10px solid transparent;
+}
+.bubble-pro { align-self: flex-start; background: #E3F2FD; border-color: var(--blue); color: #0D47A1; }
+.bubble-pro::before { left: -18px; top: 12px; border-right-color: var(--blue); }
+.bubble-con { align-self: flex-end; background: #FFEBEE; border-color: var(--red); color: #B71C1C; }
+.bubble-con::before { right: -18px; top: 12px; border-left-color: var(--red); }
+.bubble-speaker { font-size: 12px; font-weight: 900; margin-bottom: 3px; opacity: 0.7; display: flex; align-items: center; gap: 6px; }
+
+/* 开杠 */
+.cross-exam-box {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  border: 4px solid var(--dark); background: #FFE0B2;
+  padding: 12px; position: relative;
+}
+.cross-exam-box::before {
+  content: '⚡ KAI GANG ⚡';
+  position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+  background: var(--dark); color: var(--yellow); font-weight: 900; font-size: 11px;
+  padding: 3px 14px; border: 2px solid var(--yellow); white-space: nowrap;
+}
+.cross-col { border: 3px solid var(--dark); padding: 10px; background: white; font-weight: 700; font-size: 14px; min-height: 70px; }
+.cross-col.pro { background: #E3F2FD; border-color: var(--blue); }
+.cross-col.con { background: #FFEBEE; border-color: var(--red); }
+.cross-label { font-size: 10px; font-weight: 900; margin-bottom: 4px; letter-spacing: 1px; }
+
+/* 投票 */
+.vote-bar-box {
+  border: 4px solid var(--dark); background: white;
+  box-shadow: 4px 4px 0 var(--dark); padding: 10px 14px;
+}
+.vote-title { font-weight: 900; font-size: 13px; text-align: center; margin-bottom: 6px; }
+.vote-track { height: 30px; border: 3px solid var(--dark); display: flex; overflow: hidden; background: #eee; }
+.vote-fill-pro { background: var(--blue); transition: width 0.8s cubic-bezier(0.4,0,0.2,1); display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 13px; }
+.vote-fill-con { background: var(--red); transition: width 0.8s cubic-bezier(0.4,0,0.2,1); display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 13px; }
+.vote-swing { display: flex; justify-content: space-between; font-weight: 900; font-size: 13px; margin-top: 4px; color: var(--dark); }
+
+/* 导师 */
+.mentor-box { border: 4px solid var(--dark); background: #FFF3E0; box-shadow: 4px 4px 0 var(--dark); padding: 14px; }
+.mentor-box.hidden { display: none; }
+.mentor-card { display: flex; align-items: center; gap: 10px; background: white; border: 3px solid var(--dark); padding: 10px 14px; }
+.mentor-avatar { width: 40px; height: 40px; border-radius: 50%; border: 3px solid var(--dark); background: var(--teal); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.mentor-name { font-weight: 900; font-size: 14px; margin-bottom: 2px; }
+.mentor-text { font-size: 13px; color: #444; font-weight: 700; }
+
+/* 投票框 */
+.vote-box {
+  margin: 8px 0; background: white;
+  border: 4px solid var(--dark); box-shadow: 4px 4px 0 var(--dark);
+  padding: 12px 16px;
+}
+.vote-box .vote-title { font-weight: 900; font-size: 13px; text-align: center; margin-bottom: 8px; color: var(--dark); }
+
+/* 跑票卡片 (已在上方定义) */
+.sway-card {
+  background: white; border-left: 4px solid var(--yellow);
+  border-top: 3px solid var(--dark); border-right: 3px solid var(--dark);
+  border-bottom: 3px solid var(--dark);
+  padding: 8px 12px; margin: 6px 0; font-size: 13px; line-height: 1.5;
+  font-weight: 700; animation: fadeIn .3s ease;
+}
+.sway-card .s-label { color: var(--dark); font-weight: 900; }
+.sway-card .s-dir { color: #666; font-size: 12px; }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 30px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--dark); color: white; padding: 10px 24px;
+  font-size: 14px; font-weight: 900;
+  border: 3px solid var(--yellow); box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+  opacity: 0; transition: opacity .3s, transform .3s; z-index: 100; pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* 投票条形图在舞台区 */
+.vote-swing { display: flex; justify-content: space-between; font-weight: 900; font-size: 13px; margin-top: 4px; color: var(--dark); }
+
+
+/* 观众席 - emoji 人脸网格 */
+.audience-grid {
+  display: grid; grid-template-columns: repeat(6,1fr); gap: 2px;
+  padding: 6px; background: white; border: 2px solid var(--dark);
+}
+.audience-cell {
+  aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+  font-size: 24px; border: 1.5px solid var(--dark);
+  background: #f8f8f8; cursor: pointer;
+  transition: transform .15s; position: relative;
+}
+.audience-cell.pro-bg { background: #E3F2FD; }
+.audience-cell.con-bg { background: #FFEBEE; }
+.audience-cell:hover { transform: scale(1.4); z-index: 10; border-color: var(--yellow); }
+.audience-tip {
+  display: none; position: absolute; bottom: 24px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--dark); color: white; font-size: 9px; font-weight: 900;
+  padding: 2px 6px; white-space: nowrap; border: 2px solid var(--yellow);
+  z-index: 20; pointer-events: none;
+}
+.audience-cell:hover .audience-tip { display: block; }
+.audience-summary {
+  font-size: 10px; font-weight: 700; color: #666;
+  text-align: center; margin-top: 4px;
+}
+
+/* 跑票卡片 */
+.sway-card {
+  background: white; border-left: 4px solid var(--yellow);
+  border-top: 3px solid var(--dark); border-right: 3px solid var(--dark);
+  border-bottom: 3px solid var(--dark);
+  padding: 8px 12px; margin: 6px 0; font-size: 13px; line-height: 1.5;
+  font-weight: 700; animation: fadeIn .3s ease;
+}
+.sway-card .s-label { color: var(--dark); font-weight: 900; }
+.sway-card .s-dir { color: #666; font-size: 12px; }
+
+/* 投票框 */
+.vote-box {
+  margin: 8px 0; background: white;
+  border: 4px solid var(--dark); box-shadow: 4px 4px 0 var(--dark);
+  padding: 12px 16px;
+}
+.vote-box .vote-title { font-weight: 900; font-size: 13px; text-align: center; margin-bottom: 8px; color: var(--dark); }
+
+
+/* 结果框 */
+.result-box {
+  border: 4px solid var(--dark); background: white;
+  box-shadow: 6px 6px 0 var(--dark); padding: 0; text-align: center; overflow: hidden;
+}
+.result-box.hidden { display: none; }
+.result-title {
+  border-bottom: 3px solid var(--yellow);
+  background: var(--dark); color: white; font-weight: 900;
+  padding: 8px; font-size: 14px; letter-spacing: 2px;
+}
+.result-score { font-size: 56px; font-weight: 900; line-height: 1; margin: 20px 0 16px; text-shadow: 3px 3px 0 rgba(0,0,0,0.15); }
+.result-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; padding: 0 16px 16px; }
+
+
+/* 侧边栏卡片 */
+.side-card { border: 4px solid var(--dark); background: var(--cream); box-shadow: 4px 4px 0 var(--dark); }
+.side-card-header {
+  background: var(--dark); color: white; font-weight: 900;
+  text-align: center; padding: 7px; font-size: 13px; letter-spacing: 2px;
+  border-bottom: 3px solid var(--yellow);
+}
+.side-body { padding: 8px; }
+
+/* 实时投票初始化标签 */
+.live-vote-init { font-size: 10px; color: #666; font-weight: 700; text-align: center; margin-bottom: 4px; }
+
 </style>
 </head>
-<body>
-<div class="container">
-<header>
-  <h1>🎙️ AI 的夏天</h1>
-  <div class="sub">6 辩手 · 30 观众 · 实时情绪 · AI 辩论节目</div>
-  <div class="ctrl-bar">
-    <button class="btn-ctrl" id="btnPause" onclick="togglePause()">⏸️ 暂停</button>
-    <button class="btn-ctrl" id="btnSkip" onclick="skipStep()">⏭️ 跳过</button>
-    <span class="btn-ctrl" id="flowProgress" style="font-size:12px;color:var(--muted);cursor:default;border:none;background:none"></span>
-    <span id="modeIndicator" style="font-size:12px;padding:2px 8px;border-radius:4px;display:none"></span>
-  </div>
-</header>
+<body class="brick-wall">
 
-<!-- 配置面板 -->
-<div class="config" id="configPanel">
-  <div class="row"><label>辩题</label>
-    <select id="topicSelect"></select>
-    <input type="text" id="topicCustom" placeholder="或自己输入..." style="flex:0.6">
-  </div>
-  <div class="row" style="justify-content:center">
-    <span style="color:var(--pro);font-size:13px;font-weight:600">正方</span>
-    <span class="vs-badge">VS</span>
-    <span style="color:var(--con);font-size:13px;font-weight:600">反方</span>
-  </div>
-  <div class="row"><label>一辩</label><select id="pro1"></select><select id="con1"></select></div>
-  <div class="row"><label>二辩</label><select id="pro2"></select><select id="con2"></select></div>
-  <div class="row"><label>三辩</label><select id="pro3"></select><select id="con3"></select></div>
-  <div class="row"><label>主持人</label><select id="hostSelect"></select>
-    <label>导师</label><select id="mentorSelect" style="flex:0.6"></select>
-    <span class="multi-label">（选2位）</span>
-  </div>
-  <button class="btn-start" id="btnStart" onclick="startDebate()">开 始 辩 论</button>
+<!-- 装饰齿轮 -->
+<div class="gear">⚙️</div>
+<div class="gear">⚙️</div>
+<div class="gear">⚙️</div>
+<div class="gear">⚙️</div>
+
+<!-- 标题 -->
+<div class="header">
+  <div class="logo">AI CAN BB<span class="logo-reg">®</span></div>
+  <div class="tag-ai-summer">AI的夏天</div>
 </div>
 
-<!-- 主布局 -->
-<div class="main-layout" id="mainLayout">
-  <div class="debate-area">
-    <div class="stage" id="stage">
-      <div id="debateContent"><div class="stage-empty">点击「开始辩论」后观看节目</div></div>
+<!-- 控制栏 -->
+<div class="ctrl-bar" id="ctrlBar">
+  <button class="ctrl-btn" id="btnPause" onclick="togglePause()">⏸️ 暂停</button>
+  <button class="ctrl-btn" id="btnSkip" onclick="skipStep()">⏭️ 跳过</button>
+  <span class="ctrl-progress" id="flowProgress"></span>
+  <span class="ctrl-mode" id="modeIndicator" style="display:none"></span>
+</div>
+
+<!-- ===== 配置面板 ===== -->
+<div id="configPanel" class="card config-section">
+  <div class="topic-row">
+    <span style="font-weight:900;font-size:13px;background:var(--dark);color:white;padding:4px 12px;align-self:center;">辩题</span>
+    <select id="topicSelect"></select>
+    <input id="topicCustom" type="text" placeholder="或自己输入...">
+  </div>
+
+  <div class="teams-row">
+    <div class="team-box team-pro">
+      <div class="team-header">正方 PRO</div>
+      <div class="team-opts">
+        <label>一 辩</label><select id="pro1"></select>
+        <label>二 辩</label><select id="pro2"></select>
+        <label>三 辩</label><select id="pro3"></select>
+      </div>
+    </div>
+    <div class="team-box team-con">
+      <div class="team-header">反方 CON</div>
+      <div class="team-opts">
+        <label>一 辩</label><select id="con1"></select>
+        <label>二 辩</label><select id="con2"></select>
+        <label>三 辩</label><select id="con3"></select>
+      </div>
+    </div>
+  </div>
+
+  <div class="host-row">
+    <div class="host-group"><label>主持人</label><select id="hostSelect"></select></div>
+    <div class="host-group"><label>导师</label><select id="mentorSelect"></select></div>
+    <button class="start-btn" id="btnStart" onclick="startDebate()">开 始 辩 论</button>
+  </div>
+</div>
+
+<!-- ===== 主舞台 ===== -->
+<div id="mainLayout" class="stage-layout hidden">
+  <div class="main-stage">
+    <div class="topic-banner" id="topicBanner">选择辩题，开始辩论</div>
+    <div class="speech-box" id="stage">
+      <div id="debateContent"></div>
     </div>
     <div class="status-bar" id="statusBar">⏳ 正在生成...</div>
-    <div class="actions" id="actionBar">
-      <button class="btn" onclick="location.reload()">再来一局</button>
-      <button class="btn" onclick="exportScript()">导出台本</button>
+    <div class="vote-bar-box" id="voteBox" style="display:none">
+      <div class="vote-title" id="voteTitle">📊 投票</div>
+      <div class="vote-track">
+        <div id="proBar" class="vote-fill-pro" style="width:50%">50%</div>
+        <div id="conBar" class="vote-fill-con" style="width:50%">50%</div>
+      </div>
+      <div class="vote-swing" id="voteSwing"></div>
+    </div>
+    <div class="mentor-box hidden" id="mentorBox">
+      <div class="mentor-card">
+        <div class="mentor-avatar" id="mentorAvatar">🧠</div>
+        <div>
+          <div class="mentor-name" id="mentorName">导师</div>
+          <div class="mentor-text" id="mentorText"></div>
+        </div>
+      </div>
+    </div>
+    <div class="result-box hidden" id="resultBox">
+      <div class="result-title">辩论结束</div>
+      <div class="result-score" id="finalScore">-</div>
+      <div class="result-actions">
+        <button class="result-btn btn-yellow" onclick="location.reload()">再来一局</button>
+        <button class="result-btn btn-teal" onclick="exportScript()">导出台本</button>
+      </div>
     </div>
   </div>
 
-  <!-- 侧边栏 -->
+  <!-- 右侧边栏 -->
   <div class="sidebar">
-    <div class="panel"><div class="panel-title">🎭 观众席</div><div id="auditorium" class="auditorium"></div>
-      <div class="seat-progress" id="audienceSummary">30 位观众就座</div>
+    <div class="side-card">
+      <div class="side-card-header">观众席</div>
+      <div class="side-body">
+        <div class="audience-grid" id="auditorium"></div>
+        <div class="audience-summary" id="audienceSummary">30 位观众</div>
+      </div>
     </div>
-    <div class="panel" id="votePanel" style="display:none"><div class="panel-title">📊 实时投票</div>
-      <div id="voteTugOfWar"></div>
+    <div class="side-card" id="votePanel" style="display:none">
+      <div class="side-card-header">实时投票</div>
+      <div class="side-body" id="voteBody">
+        <div class="live-vote-init" id="voteInitLabel">INITIAL VOTE</div>
+        <div style="display:flex;align-items:center;gap:4px;margin:4px 0">
+          <span style="font-size:12px;font-weight:900;color:var(--blue);min-width:22px">正</span>
+          <div style="flex:1;height:22px;background:#eee;border:2px solid var(--dark);overflow:hidden;display:flex">
+            <div id="sideProBar" style="background:var(--blue);width:50%;transition:width .8s;display:flex;align-items:center;justify-content:center;color:white;font-weight:900;font-size:11px"><span id="sideProNum">15</span></div>
+            <div id="sideConBar" style="background:var(--red);width:50%;transition:width .8s;display:flex;align-items:center;justify-content:center;color:white;font-weight:900;font-size:11px"><span id="sideConNum">15</span></div>
+          </div>
+          <span style="font-size:12px;font-weight:900;color:var(--red);min-width:22px;text-align:right">反</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:900;padding:0 26px">
+          <span id="voteLeftDiff" style="color:#00C7B7"></span>
+          <span id="voteRightDiff" style="color:var(--red)"></span>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 </div>
 
 <div class="toast" id="toast"></div>
-
 <script>
 // ==================== 数据加载 ====================
 let DEBATERS=[],TOPICS=[],HOST=null,MENTORS=null,AUDIENCE=[];
@@ -371,25 +615,25 @@ function computeReactions(textFeatures){
 function updateEmotionPanel(){
   const panel=document.getElementById('auditorium');
   if(!panel)return;
-  panel.innerHTML=audienceEmotions.map(ae=>{
+  const totalPro=voteHistory.length>0?voteHistory[voteHistory.length-1].pro:15;
+  const totalCon=voteHistory.length>0?voteHistory[voteHistory.length-1].con:15;
+  panel.innerHTML=audienceEmotions.map((ae,i)=>{
     const a=AUDIENCE.find(x=>x.id===ae.id);
     const label=a?a.label:'观众';
     const emoji=EMOJI_MAP[ae.dominantIdx]||'😐';
-    return `<div class="seat" title="${label}: ${EMOJI_NAMES[ae.dominantIdx]||'平静'}">
-      <span class="s-emoji">${emoji}</span>
-      <span class="s-label">${label}</span>
+    const ename=EMOJI_NAMES[ae.dominantIdx]||'平静';
+    const isPro=Math.random()<(totalPro/(totalPro+totalCon));
+    return `<div class="audience-cell ${isPro?'pro-bg':'con-bg'}">
+      ${emoji}
+      <span class="audience-tip">${label} ${ename}</span>
     </div>`;
   }).join('');
-  // 更新汇总
   const summary=document.getElementById('audienceSummary');
   if(summary){
     const counts=Array(10).fill(0);
     audienceEmotions.forEach(ae=>counts[ae.dominantIdx]++);
-    const activeEmojis=EMOJI_MAP.filter((_,i)=>counts[i]>0).map((e,i)=>{
-      const idx=EMOJI_MAP.indexOf(e);
-      return `${e}${counts[idx]}`;
-    }).join(' ');
-    summary.textContent=activeEmojis||'😐 All';
+    const txt=EMOJI_MAP.map((e,i)=>counts[i]>0?`${e}${counts[i]}`:'').filter(Boolean).join(' ');
+    summary.textContent=txt||'😐30';
   }
 }
 
@@ -408,31 +652,27 @@ function addRunoffPoint(proVotes){
 let initialVoteDisplay=null; // 存初投数据用于显示
 function updateVoteTugOfWar(){
   const panel=document.getElementById('votePanel');
-  const container=document.getElementById('voteTugOfWar');
-  if(!container||!panel)return;
+  if(!panel)return;
   const len=voteHistory.length;
   if(len===0){panel.style.display='none';return}
   panel.style.display='block';
   const last=voteHistory[len-1];
   const pro=last.pro,con=last.con,total=pro+con;
   const proPct=Math.round(pro/total*100);
-  // 初投基准
   const init=initialVoteDisplay||last;
+  document.getElementById('voteInitLabel').textContent='INITIAL '+init.pro+':'+init.con;
+  document.getElementById('sideProBar').style.width=proPct+'%';
+  document.getElementById('sideConBar').style.width=(100-proPct)+'%';
+  document.getElementById('sideProNum').textContent=pro;
+  document.getElementById('sideConNum').textContent=con;
   const change=pro-init.pro;
-  container.innerHTML=`
-    <div class="vote-initial">基准 ${init.pro}:${init.con}</div>
-    <div class="vote-bar-container">
-      <div class="vote-half pro" style="width:${proPct}%">
-        <span class="v-label">正</span><span class="v-num">${pro}</span>
-      </div>
-      <div class="vote-half con" style="width:${100-proPct}%">
-        <span class="v-num">${con}</span><span class="v-label">反</span>
-      </div>
-    </div>
-    <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:700;padding:3px 8px 0">
-      ${change!==0?`<span style="color:${change>0?'var(--green)':'var(--red)'}">${change>0?'+'+change:change}</span>
-      <span style="color:${change>0?'var(--red)':'var(--green)'}">${change>0?'-'+change:'+'+Math.abs(change)}</span>`:'<span style="color:var(--muted);margin:0 auto">持平</span>'}
-    </div>`;
+  if(change!==0){
+    document.getElementById('voteLeftDiff').textContent=change>0?'+'+change:''+change;
+    document.getElementById('voteRightDiff').textContent=change>0?'-'+change:'+'+Math.abs(change);
+  }else{
+    document.getElementById('voteLeftDiff').textContent='';
+    document.getElementById('voteRightDiff').textContent='持平';
+  }
 }
 function setInitialVote(pro,con){
   initialVoteDisplay={pro,con};
@@ -502,6 +742,11 @@ function scrollToBottom(){
   const stage=document.getElementById('stage');
   if(stage)stage.scrollTop=stage.scrollHeight;
 }
+// 移除加载占位
+function removeLoadingIndicator(){
+  const el=document.getElementById('loadingIndicator');
+  if(el)el.remove();
+}
 function typeWrite(el,text,speed=50){
   return new Promise(resolve=>{
     el.innerHTML='';
@@ -543,6 +788,8 @@ function resumeTypewriter(){
 
 function renderStep(step){
   const container=document.getElementById('debateContent');
+  // 移除加载占位
+  removeLoadingIndicator();
   // 移除空状态
   const empty=container.querySelector('.stage-empty');
   if(empty)empty.remove();
@@ -550,9 +797,8 @@ function renderStep(step){
   switch(step.type){
     case 'host':{
       const div=document.createElement('div');
-      div.className='host-line';
+      div.className='speech-moderator';
       container.appendChild(div);
-      // 情绪更新 + 打字机同时进行
       const feats=analyzeText(step.text);
       computeReactions(feats);
       updateEmotionPanel();
@@ -564,9 +810,10 @@ function renderStep(step){
     case 'closing':{
       const div=document.createElement('div');
       const side=step.side;
-      div.className=`speech ${side}`;
-      const labelText=step.pos?`${step.name}·${step.label}（${step.pos}）`:step.name;
-      div.innerHTML=`<div class="badge">${step.type==='closing'?'📝 结辩':''} ${labelText}</div><span class="typing-area"></span>`;
+      div.className=`speech-bubble bubble-${side}`;
+      const labelText=step.pos?`${step.pos} ${step.name}`:step.name;
+      const sideLabel=side==='pro'?'正方':'反方';
+      div.innerHTML=`<div class="bubble-speaker">${sideLabel} · ${labelText}</div><div class="typing-area"></span>`;
       container.appendChild(div);
       scrollToBottom();
       const textSpan=div.querySelector('.typing-area');
@@ -587,33 +834,33 @@ function renderStep(step){
     }
     case 'battle':{
       // 寻找或创建 battle 行
-      let battleRow=container.querySelector(`.battle-row-${step.round}`);
+      let battleRow=container.querySelector(`.cross-row-${step.round}`);
       if(!battleRow){
         battleRow=document.createElement('div');
-        battleRow.className=`battle-wrap battle-row-${step.round}`;
+        battleRow.className=`cross-exam-box cross-row-${step.round}`;
         // 轮次标签
         const label=document.createElement('div');
-        label.className='battle-round';
+        label.className='cross-round';
         label.textContent=`⚡ 开杠 Round ${step.round}/6`;
         battleRow.appendChild(label);
         // 创建左右两侧
         const left=document.createElement('div');
-        left.className='battle-side';
+        left.className='cross-col';
         const right=document.createElement('div');
-        right.className='battle-side';
-        left.innerHTML='<div class="b-side">正方</div><div class="b-name"></div><div class="b-text"></div><div class="battle-timer"></div>';
-        right.innerHTML='<div class="b-side">反方</div><div class="b-name"></div><div class="b-text"></div><div class="battle-timer"></div>';
+        right.className='cross-col';
+        left.innerHTML='<div class="cross-side">正方</div><div class="cross-name"></div><div class="cross-text"></div><div class="cross-timer"></div>';
+        right.innerHTML='<div class="cross-side">反方</div><div class="cross-name"></div><div class="cross-text"></div><div class="cross-timer"></div>';
         battleRow.appendChild(left);
         battleRow.appendChild(right);
         container.appendChild(battleRow);
       }
-      const sides=battleRow.querySelectorAll('.battle-side');
+      const sides=battleRow.querySelectorAll('.cross-col');
       const idx=step.side==='pro'?0:1;
       const otherIdx=1-idx;
-      sides[idx].querySelector('.b-name').textContent='⚡ '+step.name;
-      sides[idx].querySelector('.b-text').textContent=step.text;
+      sides[idx].querySelector('.cross-name').textContent='⚡ '+step.name;
+      sides[idx].querySelector('.cross-text').textContent=step.text;
       sides[idx].classList.add('active');
-      sides[idx].querySelector('.battle-timer').style.width='100%'; // 重置计时条
+      sides[idx].querySelector('.cross-timer').style.width='100%'; // 重置计时条
       sides[otherIdx].classList.remove('active');
       scrollToBottom();
       // 情绪 + 跑票
@@ -646,23 +893,19 @@ function renderStep(step){
         title='📊 最终投票';
       }
 
-      box.innerHTML=`
+            box.innerHTML=`
         <div class="vote-title">${title}</div>
-        <div style="display:flex;align-items:center;gap:8px;margin:8px 0">
-          <span style="font-size:14px;font-weight:700;color:var(--pro);min-width:30px">正</span>
-          <div style="flex:1;height:32px;background:var(--bg);border-radius:8px;overflow:hidden;position:relative">
-            <div class="vote-single-bar pro" style="position:absolute;left:0;top:0;height:100%;width:${pctPro}%;background:linear-gradient(90deg,rgba(127,119,221,.6),rgba(127,119,221,.3));transition:width .8s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;justify-content:center;border-right:2px solid var(--pro)">
-              <span style="font-size:15px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5)">${step.pro}</span>
-            </div>
-            <div style="position:absolute;right:0;top:0;height:100%;width:${100-pctPro}%;display:flex;align-items:center;justify-content:center">
-              <span style="font-size:15px;font-weight:700;color:rgba(255,255,255,.7)">${step.con}</span>
-            </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:14px;font-weight:900;color:var(--blue);min-width:28px">正</span>
+          <div style="flex:1;height:28px;background:#eee;border:2px solid var(--dark);overflow:hidden;display:flex">
+            <div style="background:var(--blue);width:${pctPro}%;transition:width .8s;display:flex;align-items:center;justify-content:center;color:white;font-weight:900;font-size:12px">${step.pro}</div>
+            <div style="background:var(--red);width:${100-pctPro}%;transition:width .8s;display:flex;align-items:center;justify-content:center;color:white;font-weight:900;font-size:12px">${step.con}</div>
           </div>
-          <span style="font-size:14px;font-weight:700;color:var(--con);min-width:30px;text-align:right">反</span>
+          <span style="font-size:14px;font-weight:900;color:var(--red);min-width:28px;text-align:right">反</span>
         </div>
-        ${changePro!==0?`<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;padding:0 38px">
-          <span style="color:${changePro>0?'var(--green)':'var(--red)'}">${changePro>0?'+'+changePro:''}${changePro<0?changePro:''}</span>
-          <span style="color:${changePro>0?'var(--red)':'var(--green)'}">${changePro>0?'-'+changePro:''}${changePro<0?'+'+Math.abs(changePro):''}</span>
+        ${changePro!==0?`<div style="display:flex;justify-content:space-between;font-size:12px;font-weight:900;padding:0 34px;margin-top:4px">
+          <span style="color:${changePro>0?'#00C7B7':'var(--red)'}">${changePro>0?'+'+changePro:changePro}</span>
+          <span style="color:${changePro>0?'var(--red)':'#00C7B7'}">${changePro>0?'-'+changePro:'+'+Math.abs(changePro)}</span>
         </div>`:''}`;
       container.appendChild(box);
       scrollToBottom();
@@ -714,31 +957,23 @@ function renderStep(step){
       }
       return new Promise(r=>setTimeout(r,800));
     }
-    case 'mentor':{
-      const card=document.createElement('div');
-      card.className='mentor-card';
-      // 根据导师姓名分配 emoji
+        case 'mentor':{
       const eMap={'薛兆丰':'🧑‍🏫','蔡康永':'🎩','马东':'🎙️'};
       const icon=Object.keys(eMap).find(k=>step.name.includes(k));
-      card.innerHTML=`<div class="m-name">${icon?eMap[icon]:'🎙️'} ${step.name}</div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:6px">${step.title||'导师点评'}</div>
-        <span class="typing-area"></span>`;
-      container.appendChild(card);
-      scrollToBottom();
-      const textSpan=card.querySelector('.typing-area');
-      return typeWrite(textSpan,step.text).then(()=>{
-        scrollToBottom();
-      });
+      document.getElementById('mentorBox').classList.remove('hidden');
+      document.getElementById('mentorAvatar').textContent=icon?eMap[icon]:'🎙️';
+      document.getElementById('mentorName').textContent=step.name;
+      const textEl=document.getElementById('mentorText');
+      textEl.classList.add('typing-cursor');
+      return typeWrite(textEl,step.text).then(()=>{textEl.classList.remove('typing-cursor');scrollToBottom();});
     }
-    case 'done':{
+        case 'done':{
       document.getElementById('statusBar').classList.remove('show');
-      document.getElementById('actionBar').classList.add('show');
-      document.getElementById('btnPause').classList.remove('show');
-      document.getElementById('btnSkip').classList.remove('show');
-      const doneMsg=document.createElement('div');
-      doneMsg.style.cssText='text-align:center;color:var(--gold);font-size:16px;font-weight:600;padding:20px 0';
-      doneMsg.textContent='🎉 辩论结束！';
-      container.appendChild(doneMsg);
+      document.getElementById('btnPause').style.display='none';
+      document.getElementById('btnSkip').style.display='none';
+      document.getElementById('resultBox').classList.remove('hidden');
+      const lastVote=voteHistory.length>0?voteHistory[voteHistory.length-1]:{pro:0,con:0};
+      document.getElementById('finalScore').textContent=lastVote.pro+' - '+lastVote.con;
       playRunning=false;
       return Promise.resolve();
     }
@@ -900,10 +1135,9 @@ async function startDebate(){
   document.getElementById('btnStart').disabled=true;
   document.getElementById('btnStart').textContent='🎙️ 辩论中...';
   document.getElementById('configPanel').classList.add('hidden');
-  document.getElementById('mainLayout').classList.add('show');
+  document.getElementById('mainLayout').classList.remove('hidden');
   document.getElementById('debateContent').innerHTML='';
   document.getElementById('statusBar').classList.remove('show');
-  document.getElementById('actionBar').classList.remove('show');
   document.getElementById('btnPause').classList.add('show');
   document.getElementById('btnSkip').classList.add('show');
   document.getElementById('flowProgress').textContent='';
@@ -949,8 +1183,14 @@ async function startDebate(){
   }
   initEmotionEngine();
   lastInitialVote=null;
-  document.getElementById('statusBar').textContent='⏳ 正在生成...';
-  playLoop();
+      document.getElementById('statusBar').textContent='⏳ 正在生成...';
+      // 显示加载占位
+      const loadingEl=document.createElement('div');
+      loadingEl.id='loadingIndicator';
+      loadingEl.style.cssText='text-align:center;padding:30px;font-weight:900;font-size:15px;color:#666';
+      loadingEl.textContent='⏳ LLM 正在生成辩论内容...';
+      document.getElementById('debateContent').appendChild(loadingEl);
+      playLoop();
 }
 
 function exportScript(){
@@ -983,7 +1223,7 @@ if(savedId){
         if(confirm(`检测到未完成的辩论（${json.data.topicTitle||''}），是否恢复？`)){
           sessionId=savedId;useMock=false;
           document.getElementById('configPanel').classList.add('hidden');
-          document.getElementById('mainLayout').classList.add('show');
+          document.getElementById('mainLayout').classList.remove('hidden');
           document.getElementById('btnPause').classList.add('show');
           document.getElementById('btnSkip').classList.add('show');
           initEmotionEngine();
