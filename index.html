@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>AI CAN BB — AI的夏天</title>
+<title>AI CAN BB - AI奇葩说</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&display=swap');
 
@@ -153,6 +153,13 @@ body {
   padding: 8px 12px; border: 3px solid var(--dark); font-weight: 700;
   background: white; min-width: 140px; font-size: 13px;
 }
+.mentor-fixed-list {
+  display: flex; gap: 8px; flex-wrap: wrap; padding: 4px 0;
+}
+.mentor-fixed-list span {
+  background: var(--dark); color: white; font-weight: 900; font-size: 12px;
+  padding: 4px 10px; border: 2px solid var(--dark);
+}
 
 .start-btn {
   flex: 1; min-width: 200px;
@@ -231,10 +238,29 @@ body {
   background: var(--dark); color: var(--yellow); font-weight: 900; font-size: 11px;
   padding: 3px 14px; border: 2px solid var(--yellow); white-space: nowrap;
 }
+.cross-exam-box.p1-battle::before {
+  content: '⚡ 一辩开杠 ⚡';
+  position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+  background: var(--dark); color: var(--yellow); font-weight: 900; font-size: 11px;
+  padding: 3px 14px; border: 2px solid var(--yellow); white-space: nowrap;
+}
+.cross-exam-box.p3-battle::before {
+  content: '⚡ 三辩开杠 ⚡';
+  position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+  background: var(--dark); color: var(--yellow); font-weight: 900; font-size: 11px;
+  padding: 3px 14px; border: 2px solid var(--yellow); white-space: nowrap;
+}
 .cross-col { border: 3px solid var(--dark); padding: 10px; background: white; font-weight: 700; font-size: 14px; min-height: 70px; }
 .cross-col.pro { background: #E3F2FD; border-color: var(--blue); }
 .cross-col.con { background: #FFEBEE; border-color: var(--red); }
 .cross-label { font-size: 10px; font-weight: 900; margin-bottom: 4px; letter-spacing: 1px; }
+.cross-strategy-tag {
+  display: inline-block;
+  font-size: 10px; font-weight: 900;
+  padding: 1px 6px; border-radius: 3px;
+  margin-left: 4px;
+  background: var(--yellow); color: var(--dark);
+}
 
 /* 投票 */
 .vote-bar-box {
@@ -247,7 +273,38 @@ body {
 .vote-fill-con { background: var(--red); transition: width 0.8s cubic-bezier(0.4,0,0.2,1); display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 13px; }
 .vote-swing { display: flex; justify-content: space-between; font-weight: 900; font-size: 13px; margin-top: 4px; color: var(--dark); }
 
-/* 导师 */
+/* 导师插话卡片 */
+.mentor-comment-box {
+  border: 4px solid var(--dark); background: #FFF3E0;
+  box-shadow: 4px 4px 0 var(--dark); padding: 10px 14px;
+  margin: 6px 0;
+  animation: fadeIn .3s ease;
+}
+.mentor-comment-header {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 4px;
+}
+.mentor-comment-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 2px solid var(--dark); background: var(--teal);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+.mentor-comment-name {
+  font-weight: 900; font-size: 13px; color: var(--dark);
+}
+.mentor-comment-tag {
+  font-size: 10px; font-weight: 900;
+  background: var(--dark); color: var(--yellow);
+  padding: 1px 8px; border-radius: 2px;
+  margin-left: auto;
+}
+.mentor-comment-text {
+  font-size: 14px; color: #444; font-weight: 700;
+  line-height: 1.5; padding-left: 40px;
+}
+
+/* 导师正式点评 */
 .mentor-box { border: 4px solid var(--dark); background: #FFF3E0; box-shadow: 4px 4px 0 var(--dark); padding: 14px; }
 .mentor-box.hidden { display: none; }
 .mentor-card { display: flex; align-items: center; gap: 10px; background: white; border: 3px solid var(--dark); padding: 10px 14px; }
@@ -288,7 +345,6 @@ body {
 /* 投票条形图在舞台区 */
 .vote-swing { display: flex; justify-content: space-between; font-weight: 900; font-size: 13px; margin-top: 4px; color: var(--dark); }
 
-
 /* 观众席 - emoji 人脸网格 */
 .audience-grid {
   display: grid; grid-template-columns: repeat(6,1fr); gap: 2px;
@@ -327,15 +383,6 @@ body {
 .sway-card .s-label { color: var(--dark); font-weight: 900; }
 .sway-card .s-dir { color: #666; font-size: 12px; }
 
-/* 投票框 */
-.vote-box {
-  margin: 8px 0; background: white;
-  border: 4px solid var(--dark); box-shadow: 4px 4px 0 var(--dark);
-  padding: 12px 16px;
-}
-.vote-box .vote-title { font-weight: 900; font-size: 13px; text-align: center; margin-bottom: 8px; color: var(--dark); }
-
-
 /* 结果框 */
 .result-box {
   border: 4px solid var(--dark); background: white;
@@ -350,7 +397,6 @@ body {
 .result-score { font-size: 56px; font-weight: 900; line-height: 1; margin: 20px 0 16px; text-shadow: 3px 3px 0 rgba(0,0,0,0.15); }
 .result-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; padding: 0 16px 16px; }
 
-
 /* 侧边栏卡片 */
 .side-card { border: 4px solid var(--dark); background: var(--cream); box-shadow: 4px 4px 0 var(--dark); }
 .side-card-header {
@@ -362,6 +408,91 @@ body {
 
 /* 实时投票初始化标签 */
 .live-vote-init { font-size: 10px; color: #666; font-weight: 700; text-align: center; margin-bottom: 4px; }
+
+/* ===== 选择扮演方面板 ===== */
+.side-select-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6); z-index: 50;
+  display: none; align-items: center; justify-content: center;
+}
+.side-select-overlay.show { display: flex; }
+.side-select-panel {
+  background: var(--cream);
+  border: 4px solid var(--dark);
+  box-shadow: 10px 10px 0 var(--dark);
+  padding: 30px 40px;
+  max-width: 500px;
+  text-align: center;
+  animation: fadeIn .3s ease;
+}
+.side-select-panel h3 {
+  font-size: 22px; font-weight: 900;
+  margin-bottom: 8px; color: var(--dark);
+}
+.side-select-panel p {
+  font-size: 14px; font-weight: 700;
+  color: #666; margin-bottom: 20px;
+}
+.side-select-btn {
+  display: block; width: 100%;
+  padding: 14px; margin-bottom: 10px;
+  font-size: 16px; font-weight: 900;
+  border: 4px solid var(--dark);
+  box-shadow: 4px 4px 0 var(--dark);
+  cursor: pointer; transition: all 0.1s;
+  background: white; color: var(--dark);
+}
+.side-select-btn:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--dark); }
+.side-select-btn:active { transform: translate(3px,3px); box-shadow: none; }
+.side-select-btn.pro { border-color: var(--blue); background: #E3F2FD; color: var(--blue); }
+.side-select-btn.con { border-color: var(--red); background: #FFEBEE; color: var(--red); }
+.side-select-btn.skip { border-color: #999; background: #f0f0f0; color: #666; }
+
+/* ===== 策略选择面板 ===== */
+.strategy-select-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6); z-index: 50;
+  display: none; align-items: center; justify-content: center;
+}
+.strategy-select-overlay.show { display: flex; }
+.strategy-select-panel {
+  background: var(--cream);
+  border: 4px solid var(--dark);
+  box-shadow: 10px 10px 0 var(--dark);
+  padding: 24px 32px;
+  max-width: 460px;
+  text-align: center;
+  animation: fadeIn .3s ease;
+}
+.strategy-select-panel h3 {
+  font-size: 20px; font-weight: 900;
+  margin-bottom: 6px; color: var(--dark);
+}
+.strategy-select-panel .strategy-hint {
+  font-size: 13px; font-weight: 700;
+  color: #666; margin-bottom: 4px;
+}
+.strategy-countdown {
+  font-size: 14px; font-weight: 900;
+  color: var(--red); margin-bottom: 14px;
+}
+.strategy-btn {
+  display: block; width: 100%;
+  padding: 12px 14px; margin-bottom: 8px;
+  font-size: 14px; font-weight: 900; text-align: left;
+  border: 3px solid var(--dark);
+  box-shadow: 3px 3px 0 var(--dark);
+  cursor: pointer; transition: all 0.1s;
+  background: white; color: var(--dark);
+}
+.strategy-btn:hover { transform: translate(-2px,-2px); box-shadow: 5px 5px 0 var(--dark); }
+.strategy-btn:active { transform: translate(2px,2px); box-shadow: none; }
+.strategy-btn .strategy-desc {
+  font-size: 11px; font-weight: 700;
+  color: #888; display: block; margin-top: 2px;
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 </style>
 </head>
@@ -376,7 +507,7 @@ body {
 <!-- 标题 -->
 <div class="header">
   <div class="logo">AI CAN BB<span class="logo-reg">®</span></div>
-  <div class="tag-ai-summer">AI的夏天</div>
+  <div class="tag-ai-summer">AI奇葩说</div>
 </div>
 
 <!-- 控制栏 -->
@@ -384,6 +515,7 @@ body {
   <button class="ctrl-btn" id="btnPause" onclick="togglePause()">⏸️ 暂停</button>
   <button class="ctrl-btn" id="btnSkip" onclick="skipStep()">⏭️ 跳过</button>
   <span class="ctrl-progress" id="flowProgress"></span>
+  <button class="ctrl-btn" id="btnVoice" onclick="toggleVoice()">🔊 语音</button>
   <span class="ctrl-mode" id="modeIndicator" style="display:none"></span>
 </div>
 
@@ -416,7 +548,14 @@ body {
 
   <div class="host-row">
     <div class="host-group"><label>主持人</label><select id="hostSelect"></select></div>
-    <div class="host-group"><label>导师</label><select id="mentorSelect"></select></div>
+    <div class="host-group"><label>导师（固定）</label>
+      <div class="mentor-fixed-list" id="mentorFixedList">
+        <span>🧑‍🏫 薛兆丰</span>
+        <span>🧑‍🏫 刘擎</span>
+        <span>🎩 蔡康永</span>
+        <span>🤡 李诞</span>
+      </div>
+    </div>
     <button class="start-btn" id="btnStart" onclick="startDebate()">开 始 辩 论</button>
   </div>
 </div>
@@ -486,24 +625,44 @@ body {
   </div>
 </div>
 
+<!-- ===== 选择扮演方弹窗 ===== -->
+<div class="side-select-overlay" id="sideSelectOverlay">
+  <div class="side-select-panel">
+    <h3>🎭 选择扮演方</h3>
+    <p id="sideSelectHint">你想在一辩开杠中扮演哪一方？</p>
+    <button class="side-select-btn pro" onclick="selectSide('pro')">🎭 扮演正方</button>
+    <button class="side-select-btn con" onclick="selectSide('con')">🎭 扮演反方</button>
+    <button class="side-select-btn skip" onclick="selectSide('skip')">⏭️ 跳过</button>
+  </div>
+</div>
+
+<!-- ===== 策略选择弹窗 ===== -->
+<div class="strategy-select-overlay" id="strategySelectOverlay">
+  <div class="strategy-select-panel">
+    <h3>🎯 选择辩论策略</h3>
+    <div class="strategy-hint" id="strategyHint">选择本轮开杠的策略</div>
+    <div class="strategy-countdown" id="strategyCountdown">剩余时间: 10s</div>
+    <div id="strategyButtons"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 <script>
 // ==================== 数据加载 ====================
-let DEBATERS=[],TOPICS=[],HOST=null,MENTORS=null,AUDIENCE=[];
+let DEBATERS=[],TOPICS=[],HOST=null,MENTORS=null,AUDIENCE=[],BATTLE_STRATEGIES=[];
 async function loadData(){
   try{
-    // 尝试从 data/ 加载本地 JSON
-    const [d,t,h,m,a]=await Promise.all([
+    const [d,t,h,m,a,bs]=await Promise.all([
       fetch('data/debaters.json').then(r=>r.json()),
       fetch('data/topics.json').then(r=>r.json()),
       fetch('data/referee.json').then(r=>r.json()),
       fetch('data/mentors.json').then(r=>r.json()),
-      fetch('data/audience.json').then(r=>r.json())
+      fetch('data/audience_300.json').then(r=>r.json()).catch(()=>fetch('data/audience.json').then(r=>r.json())),
+      fetch('data/battle_strategies.json').then(r=>r.json()).catch(()=>[])
     ]);
-    DEBATERS=d;TOPICS=t;HOST=Array.isArray(h)?h[0]:h;MENTORS=m;AUDIENCE=a;
+    DEBATERS=d;TOPICS=t;HOST=Array.isArray(h)?h[0]:h;MENTORS=m;AUDIENCE=a;BATTLE_STRATEGIES=bs;
     populateSelects();
   }catch(e){
-    // 降级：用内嵌基础数据
     DEBATERS=[
       {id:'chenming',name:'陈铭',label:'逻辑型'},
       {id:'xiaoxiao',name:'肖骁',label:'综艺型'},
@@ -525,6 +684,7 @@ async function loadData(){
       id:i+1,label:['职场妈妈','程序员','大学生','退休大爷','创业者'][i%5],
       emotion:{humor:.5,logic:.5,emotion:.5,story:.5,golden:.5,aggression:.3,novelty:.5}
     }));
+    BATTLE_STRATEGIES=[];
     populateSelects();
     toast('数据加载失败，使用内置数据');
   }
@@ -535,7 +695,7 @@ function populateSelects(){
   topicEl.innerHTML='<option value="">-- 选择辩题 --</option>';
   TOPICS.forEach((t,i)=>{topicEl.innerHTML+=`<option value="${i}">${t.title}</option>`});
 
-  const opts=DEBATERS.map((d,i)=>`<option value="${i}">${d.name}（${d.label}）</option>`).join('');
+  const opts=DEBATERS.map((d,i)=>`<option value="${i}">${d.name}</option>`).join('');
   const ids=['pro1','pro2','pro3','con1','con2','con3'];
   ids.forEach(id=>{document.getElementById(id).innerHTML=opts});
 
@@ -548,7 +708,15 @@ function populateSelects(){
   ids.forEach((id,i)=>{document.getElementById(id).selectedIndex=indices[i]});
 
   document.getElementById('hostSelect').innerHTML=HOST?`<option value="0">${HOST.name}</option>`:'';
-  document.getElementById('mentorSelect').innerHTML=MENTORS.map((m,i)=>`<option value="${i}">${m.name}</option>`).join('');
+
+  // 固定显示全部4位导师，不再使用下拉框
+  const mentorFixedList=document.getElementById('mentorFixedList');
+  if(mentorFixedList&&MENTORS){
+    mentorFixedList.innerHTML=MENTORS.map(m=>{
+      const emoji=m.title&&(m.title.includes('经济')||m.title.includes('哲学'))?'🧑‍🏫':m.title&&m.title.includes('人文')?'🎩':'🤡';
+      return `<span>${emoji} ${m.name.replace('风格','')}</span>`;
+    }).join('');
+  }
 }
 
 // ==================== 情绪引擎 ====================
@@ -556,14 +724,39 @@ const EMOJI_MAP=['😂','🤔','😤','👏','😐','😠','🤯','😲','💪',
 const EMOTION_KEYS=['humor','logic','emotion','golden','story','aggression','novelty','exclamation','short','sublime'];
 const EMOJI_NAMES=['幽默','逻辑','感动','金句','故事','攻击','新颖','惊讶','短促','升华'];
 const EMOJI_COLORS=['c0','c1','c2','c3','c4','c5','c6','c7','c8','c4'];
-let audienceEmotions=[]; // [{id, label, dominant_emoji_idx}]
+let audienceEmotions=[];
 
 function initEmotionEngine(){
   audienceEmotions=AUDIENCE.map(a=>({
     id:a.id,label:a.label,
-    dominantIdx:2 // 默认 😐
+    dominantIdx:2
   }));
   updateEmotionPanel();
+}
+
+/**
+ * 从后端state同步观众数据：
+ * 把AUDIENCE（300人池）过滤成本场选中的30人
+ */
+function syncAudienceFromState(stateData){
+  const selectedIds=new Set((stateData.audience||[]).map(v=>v.id));
+  AUDIENCE=AUDIENCE.filter(a=>selectedIds.has(a.id));
+  console.log(`[观众同步] 过滤到 ${AUDIENCE.length} 人`);
+}
+
+/**
+ * 调 /state 接口后同步观众
+ */
+async function syncAudienceToSession(sessionId){
+  try{
+    const res=await fetch(`/api/session/${sessionId}/state`);
+    const json=await res.json();
+    if(json.code===200&&json.data){
+      syncAudienceFromState(json.data);
+    }
+  }catch(e){
+    console.warn('[观众同步] 失败:', e.message);
+  }
 }
 
 function analyzeText(text){
@@ -589,24 +782,20 @@ function computeReactions(textFeatures){
   audienceEmotions.forEach(ae=>{
     const a=AUDIENCE.find(x=>x.id===ae.id)||AUDIENCE[0];
     if(!a)return;
-    // 10维特征加权，每个观众有自己的敏感度分布
     const scores=EMOTION_KEYS.map((key,i)=>{
       const sensitivity=(a.emotion&&a.emotion[key])||(key==='aggression'?0.2:0.4);
       const detected=textFeatures[key]||0;
-      return sensitivity*detected*(0.85+Math.random()*0.3); // 随机波动
+      return sensitivity*detected*(0.85+Math.random()*0.3);
     });
-    // 同时考虑 trigger 关键词
     const triggers=a.triggers||{};
     const triggerBonus=Object.keys(triggers).reduce((sum,word)=>{
       return sum+(textFeatures.humor>0&&triggers[word]>0?triggers[word]*0.1:0);
     },0);
-    // 找最高分作为情绪，加 trigger 影响
     let maxIdx=9, maxVal=0;
     scores.forEach((s,i)=>{
-      const bonus=i===0?triggerBonus:0; // trigger 主要影响幽默维度
+      const bonus=i===0?triggerBonus:0;
       if(s+bonus>maxVal){maxVal=s+bonus;maxIdx=i}
     });
-    // 如果分数太低，归为 😐（末位）
     ae.dominantIdx=maxVal<0.1?9:maxIdx;
     ae.triggerActive=triggerBonus>0.1;
   });
@@ -649,7 +838,7 @@ function addRunoffPoint(proVotes){
 }
 
 // ==================== 实时投票拉锯条 ====================
-let initialVoteDisplay=null; // 存初投数据用于显示
+let initialVoteDisplay=null;
 function updateVoteTugOfWar(){
   const panel=document.getElementById('votePanel');
   if(!panel)return;
@@ -679,11 +868,234 @@ function setInitialVote(pro,con){
   updateVoteTugOfWar();
 }
 
+// ==================== 选择扮演方 ====================
+let pendingSideSelect=null; // { battlePhase, resolve }
+
+function showSideSelectPanel(battlePhase){
+  return new Promise(resolve=>{
+    const overlay=document.getElementById('sideSelectOverlay');
+    const hint=document.getElementById('sideSelectHint');
+    hint.textContent=battlePhase==='p1'?'你想在一辩开杠中扮演哪一方？':'你想在三辩开杠中扮演哪一方？';
+    overlay.classList.add('show');
+    pendingSideSelect={battlePhase, resolve};
+  });
+}
+
+function selectSide(side){
+  const overlay=document.getElementById('sideSelectOverlay');
+  overlay.classList.remove('show');
+  if(pendingSideSelect){
+    const {battlePhase, resolve}=pendingSideSelect;
+    pendingSideSelect=null;
+
+    const sideValue=side==='skip'?null:side;
+    // 发送到后端
+    if(sessionId&&!useMock){
+      fetch(`/api/session/${sessionId}/battle/select-side`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({battlePhase, side: sideValue})
+      }).catch(e=>console.error('[API] select-side失败:', e.message));
+    }
+    resolve(sideValue);
+  }
+}
+
+// ==================== 策略选择 ====================
+let pendingStrategySelect=null; // { battlePhase, turn, resolve }
+let strategyTimer=null;
+let currentStrategyList=[]; // 当前显示的策略列表（用于超时自动选择）
+
+// 14个策略对应的emoji
+const STRATEGY_EMOJI_MAP={
+  'confront':'⚔️','critique':'🔍','counterforce':'🔄','follow-through':'♟️',
+  'undermine':'💥','contradiction':'⚡','strike-core':'🎯','clarify':'📖',
+  'lure':'🪤','substitute':'🔄','avoid':'↩️','humor':'😄',
+  'emotional':'💖','sublime':'🌟'
+};
+
+function getStrategyEmoji(strategyId){
+  return STRATEGY_EMOJI_MAP[strategyId]||'🎯';
+}
+
+async function loadRecommendedStrategies(battlePhase, turn){
+  // 如果不是API模式，跳过
+  if(!sessionId||useMock)return null;
+  try{
+    const res=await fetch(`/api/session/${sessionId}/battle/recommend-strategies?phase=${battlePhase}&turn=${turn}`);
+    const json=await res.json();
+    if(json.code===200&&json.data&&json.data.strategies&&json.data.strategies.length>0){
+      console.log('[策略] 获取推荐成功:', json.data.strategies.length, '个策略');
+      return json.data.strategies;
+    }
+  }catch(e){
+    console.warn('[策略] 推荐API失败:', e.message);
+  }
+  return null;
+}
+
+async function showStrategySelectPanel(battlePhase, turn, debaterName){
+  const overlay=document.getElementById('strategySelectOverlay');
+  const hint=document.getElementById('strategyHint');
+  const countdown=document.getElementById('strategyCountdown');
+  const btnContainer=document.getElementById('strategyButtons');
+
+  const phaseLabel=battlePhase==='p1'?'一辩开杠':'三辩开杠';
+  hint.textContent=`${phaseLabel} · 第${turn}轮 · ${debaterName||'未知辩手'} 请选择策略`;
+
+  // 1. 尝试从API加载推荐策略
+  let strategies=await loadRecommendedStrategies(battlePhase, turn);
+
+  // 2. 降级：使用本地策略库
+  if(!strategies||strategies.length===0){
+    if(BATTLE_STRATEGIES.length===0){
+      resolveToNull();
+      return;
+    }
+    // 本地fallback：用前5个或全部
+    strategies=BATTLE_STRATEGIES.slice(0,5).map(s=>({
+      id:s.id, name:s.name, description:s.description,
+      effect:s.effect||'', reason:s.description
+    }));
+  }
+
+  // 保存当前策略列表，用于超时自动选择
+  currentStrategyList=strategies;
+
+  // 3. 生成策略按钮（显示推荐理由作为副标题）
+  btnContainer.innerHTML=strategies.map(s=>
+    `<button class="strategy-btn" onclick="selectStrategy('${s.id}')">
+      ${getStrategyEmoji(s.id)} ${s.name}
+      <span class="strategy-desc">${s.reason||s.description}</span>
+    </button>`
+  ).join('');
+
+  // 4. 显示面板 + 倒计时
+  return new Promise(resolve=>{
+    overlay.classList.add('show');
+    pendingStrategySelect={battlePhase, turn, resolve};
+
+    let seconds=10;
+    countdown.textContent=`剩余时间: ${seconds}s`;
+    if(strategyTimer)clearInterval(strategyTimer);
+    strategyTimer=setInterval(()=>{
+      seconds--;
+      countdown.textContent=`剩余时间: ${seconds}s`;
+      if(seconds<=0){
+        clearInterval(strategyTimer);
+        strategyTimer=null;
+        autoSelectStrategy();
+      }
+    },1000);
+  });
+}
+
+function resolveToNull(){
+  if(pendingStrategySelect){
+    const {resolve}=pendingStrategySelect;
+    pendingStrategySelect=null;
+    resolve(null);
+  }
+}
+
+function selectStrategy(strategyId){
+  if(strategyTimer){
+    clearInterval(strategyTimer);
+    strategyTimer=null;
+  }
+  const overlay=document.getElementById('strategySelectOverlay');
+  overlay.classList.remove('show');
+  if(pendingStrategySelect){
+    const {battlePhase, turn, resolve}=pendingStrategySelect;
+    pendingStrategySelect=null;
+    // 发送到后端
+    if(sessionId&&!useMock){
+      fetch(`/api/session/${sessionId}/battle/strategy`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({battlePhase, turn, strategyId})
+      }).catch(e=>console.error('[API] strategy失败:', e.message));
+    }
+    resolve(strategyId);
+  }
+}
+
+function autoSelectStrategy(){
+  const overlay=document.getElementById('strategySelectOverlay');
+  overlay.classList.remove('show');
+  if(pendingStrategySelect){
+    const {battlePhase, turn, resolve}=pendingStrategySelect;
+    pendingStrategySelect=null;
+    // 从当前显示的策略列表中随机选（兼容API推荐和本地fallback）
+    if(currentStrategyList.length>0){
+      const randomIdx=Math.floor(Math.random()*currentStrategyList.length);
+      const strategyId=currentStrategyList[randomIdx].id;
+      if(sessionId&&!useMock){
+        fetch(`/api/session/${sessionId}/battle/strategy`,{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({battlePhase, turn, strategyId})
+        }).catch(e=>console.error('[API] strategy失败:', e.message));
+      }
+      toast(`⏰ 超时自动选择: ${currentStrategyList[randomIdx].name}`);
+      resolve(strategyId);
+    }else{
+      resolve(null);
+    }
+  }
+}
+
 // ==================== 模拟辩论数据 ====================
 let paused=false, skipRequested=false, playRunning=false;
 let useMock=true, sessionId=null, lastInitialVote=null, lastInitialVoteData=null;
 let mockSteps=[], currentStepIdx=0;
 let typewriterState={el:null,text:'',i:0,speed:50,timer:null,resolve:null};
+
+// ==================== 语音引擎 ====================
+// URL 带 ?z 才开启语音（省钱模式）
+const hasVoiceParam = window.location.search.includes('z');
+let voiceEnabled = hasVoiceParam;
+let currentAudio=null;
+let audioLoadQueue=[];
+
+function toggleVoice(){
+  voiceEnabled=!voiceEnabled;
+  document.getElementById('btnVoice').textContent=voiceEnabled?'🔊 语音':'🔇 静音';
+  if(!voiceEnabled&&currentAudio){
+    currentAudio.pause();
+    currentAudio=null;
+  }
+}
+
+function playAudio(audioUrl){
+  if(!voiceEnabled||!audioUrl)return Promise.resolve();
+  if(currentAudio){
+    currentAudio.pause();
+    currentAudio=null;
+  }
+  return new Promise(resolve=>{
+    const audio=new Audio(audioUrl);
+    currentAudio=audio;
+    audio.onended=()=>{currentAudio=null;resolve()};
+    audio.onerror=()=>{currentAudio=null;resolve()};
+    audio.play().catch(()=>{currentAudio=null;resolve()});
+  });
+}
+
+function pauseAudio(){
+  if(currentAudio&&!currentAudio.paused)currentAudio.pause();
+}
+
+function resumeAudio(){
+  if(currentAudio&&currentAudio.paused)currentAudio.play().catch(()=>{});
+}
+
+function stopAudio(){
+  if(currentAudio){
+    currentAudio.pause();
+    currentAudio=null;
+  }
+}
 
 function buildMockSteps(topic,proTeam,conTeam,host,mentors){
   const proName=proTeam.map(d=>d.name);
@@ -691,48 +1103,71 @@ function buildMockSteps(topic,proTeam,conTeam,host,mentors){
   const proLabel=proTeam.map(d=>d.label);
   const conLabel=conTeam.map(d=>d.label);
   const mentorName=mentors.map(m=>m.name||m);
+  // 导师插话名字映射
+  const mentorCommentNames={p1:mentorName[0]||'薛兆丰',bp1:mentorName[Math.min(3,mentors.length-1)]||'李诞',p2:mentorName[Math.min(2,mentors.length-1)]||'蔡康永',p3:mentorName[Math.min(1,mentors.length-1)]||'刘擎',bp3:mentorName[Math.floor(Math.random()*mentors.length)]||'导师'};
+
   return [
     {type:'host',text:`欢迎来到 AI 的夏天！今天的辩论主题是——「${topic}」。在听任何辩论之前，我们先看看现场的 30 位观众怎么想。`},
     {type:'vote',stage:'initial',pro:12,con:18},
+    // 一辩环节
     {type:'speech',side:'pro',name:proName[0],label:proLabel[0],pos:'一辩',
-      text:`这道题的关键，不在于"要不要"买房，而在于"买房"对我们这个时代意味着什么。当我们在问结婚要不要买房的时候，我们真正在问的是：我们要不要为婚姻寻找一个物质支点？我的回答是要。不是因为房子本身有多重要，而是因为它给了婚姻一个可以锚定的坐标。没有这个坐标，你们俩在这个巨大的城市里，就像两片浮萍，随波逐流。`},
+      text:`这道题的关键，不在于"要不要"买房，而在于"买房"对我们这个时代意味着什么。当我们在问结婚要不要买房的时候，我们真正在问的是：我们要不要为婚姻寻找一个物质支点？我的回答是要。不是因为房子本身有多重要，而是因为它给了婚姻一个可以锚定的坐标。`},
     {type:'speech',side:'con',name:conName[0],label:conLabel[0],pos:'一辩',
-      text:`哎呀我的陈铭老师～你说得特别有道理，但我有个问题：你结婚了吗？你知道现在的房价有多离谱吗？两个人刚结婚，本来是最甜蜜的时候，结果背上三十年房贷，你管这叫"锚定坐标"？这叫"套牢"好吗！我觉得，租房子结婚怎么了？租来的房子就不是家了？你妈在出租屋给你做的饭，难道就不香了？`},
+      text:`今天看到很多人在争论这个问题，我想说一个最简单的道理：两个人在一起，爱是最重要的，没有爱，什么房子都白搭。`},
+    {type:'mentor_comment',name:mentorCommentNames.p1,
+      text:'婚姻的基础从来不是房子，而是两个人都愿意为彼此妥协的那份心意。'},
+    // 一辩开杠
+    {type:'host',text:'好，现在进入一辩开杠环节！'},
+    {type:'battle',phase:'p1',round:1,side:'pro',name:proName[0],pos:'一辩',text:`反方一直在说贵。但贵，不是不买的理由。三十年前大家也觉得彩电贵，但那是刚需。`},
+    {type:'battle',phase:'p1',round:1,side:'con',name:conName[0],pos:'一辩',text:`确定性？那你怎么解释现在那么多有房有车还离婚的？`},
+    {type:'battle',phase:'p1',round:2,side:'pro',name:proName[0],pos:'一辩',text:`我来说个现实问题——试想一下你们结婚后第一个孩子出生，在出租屋和在自己家感受完全不同。`},
+    {type:'battle',phase:'p1',round:2,side:'con',name:conName[0],pos:'一辩',text:`你说的对，但是很多年轻人连首付都凑不出来，你让他们怎么办？`},
+    {type:'battle',phase:'p1',round:3,side:'pro',name:proName[0],pos:'一辩',text:`我们不是在要求每个人都要买房。我们是在说，如果条件允许，买房的好处远超成本。`},
+    {type:'battle',phase:'p1',round:3,side:'con',name:conName[0],pos:'一辩',text:`我同意要有选择权。但不要因为别人都买房，你就觉得不买房就是错的。`},
+    {type:'mentor_comment',name:mentorCommentNames.bp1,
+      text:'开杠精彩！两边都有道理，这才是辩论的魅力所在。'},
+    // 二辩环节
+    {type:'host',text:'接下来有请二辩选手！'},
     {type:'speech',side:'pro',name:proName[1],label:proLabel[1],pos:'二辩',
-      text:`我们换个角度想。从经济学的角度来看，买房本质上是一种强制储蓄。结婚后的前十年，是最容易因为琐事吵架的十年。而有房贷的夫妻，反而多了一个"不能随便辞职"的共同约束——听起来很残酷，但数据告诉我们，有房产的夫妻离婚率确实更低。不是房子维系了感情，而是共同的财务约束，给了彼此更多磨合的时间。`},
+      text:`我们换个角度想。从经济学的角度来看，买房本质上是一种强制储蓄。结婚后的前十年，是最容易因为琐事吵架的十年。而有房贷的夫妻，反而多了一个"不能随便辞职"的共同约束。`},
     {type:'speech',side:'con',name:conName[1],label:conLabel[1],pos:'二辩',
-      text:`我有个闺蜜，跟她老公结婚的时候，两家凑了首付买了房。两年后，两个人为了装修风格吵了无数次，最后一地鸡毛。你说房子是婚姻的锚，我倒觉得房子是婚姻的放大镜——好的时候更好，不好的时候，房贷就是压死骆驼的最后一根稻草。我承认，房子能给安全感。但问题是，这个安全感的代价，是不是太大了？`},
+      text:`我有个闺蜜，跟她老公结婚的时候，两家凑了首付买了房。两年后，两个人为了装修风格吵了无数次，最后一地鸡毛。`},
+    {type:'mentor_comment',name:mentorCommentNames.p2,
+      text:'二辩的发言很有深度，双方都找到了很好的切入点。'},
+    // 三辩环节
+    {type:'host',text:'最后有请三辩选手！'},
     {type:'speech',side:'pro',name:proName[2],label:proLabel[2],pos:'三辩',
-      text:`我想讲一个故事。我有个朋友，结婚五年一直租房住。去年房东说要卖房，他们一家三口在两个月内搬了三次家。他五岁的女儿有天问：爸爸，为什么我们没有自己的家？那一刻，他说他不知道怎么回答。`},
+      text:`我想讲一个故事。我有个朋友，结婚五年一直租房住。去年房东说要卖房，他们一家三口在两个月内搬了三次家。`},
     {type:'speech',side:'con',name:conName[2],label:conLabel[2],pos:'三辩',
-      text:`哎呀这个辩题……房子和家，是一回事吗？黄老师讲的故事特别动人，但你仔细想——房子是家吗？那个小女孩问的是"自己的家"，不是"自己的房产"。我从小在出租屋长大，我妈把每个租来的房子都收拾得特别温馨。家是住出来的，不是买出来的。如果你非要说有房才有家，那那些一辈子租房的人，是不是都不配拥有幸福？`},
-    // 开杠 4 轮
-    {type:'battle',round:1,side:'pro',name:proName[0],text:`反方一直在说房子贵。但贵，不是不买的理由。三十年前大家也觉得买彩电贵，但那是刚需。结婚的刚需是什么？是确定性。房子给了婚姻最大的确定性。`},
-    {type:'battle',round:1,side:'con',name:conName[0],text:`确定性？那你怎么解释现在那么多有房有车还离婚的？确定性不在房产证上，在两个人的心里。`},
-    {type:'battle',round:2,side:'pro',name:proName[1],text:`我来说个现实问题——试想一下，你们结婚后第一个孩子出生。半夜喂奶、换尿布，你是在自己的客厅里做这些事，还是在房东随时可能收回的客厅里？这件事对母亲的心理影响是完全不同的。`},
-    {type:'battle',round:2,side:'con',name:conName[1],text:`你说的这个场景，我承认对母亲来说感受不同。但你要知道，现在很多年轻人连首付都凑不出来，你让他们怎么办？借钱？啃老？是不是为了一个所谓的"家"，先把两个家庭都掏空了再说？`},
-    {type:'battle',round:3,side:'pro',name:proName[2],text:`我们不是在要求每个人都要买房。我们是在说，如果条件允许，买房的长期收益——不仅仅是经济上的，更是心理上的——远超它的成本。这不是对错问题，这是个选择问题。而我们要做的，是让更多人拥有这个选择权。`},
-    {type:'battle',round:3,side:'con',name:conName[2],text:`我完全同意你说的"要有选择权"。那我们的分歧只有一个——你把房子当成了婚姻的必需品，而我把它当成一个可选项。你可以选买房，也可以选租房。我今天来这个舞台想说的是：不要因为别人都买房，你就觉得不买房就是错的。清醒一点，朋友们。`},
-    // 结辩
+      text:`房子和家，是一回事吗？房子不是家，家是住出来的，不是买出来的。`},
+    {type:'mentor_comment',name:mentorCommentNames.p3,
+      text:'三辩的表现让我看到了辩论的高度，不仅仅是观点的较量。'},
+    // 三辩开杠
+    {type:'host',text:'好，现在进入三辩开杠环节！'},
+    {type:'battle',phase:'p3',round:1,side:'pro',name:proName[2],pos:'三辩',text:`反方一直在说感情，但感情也需要物质基础。`},
+    {type:'battle',phase:'p3',round:1,side:'con',name:conName[2],pos:'三辩',text:`物质基础不等于房子。你把两个概念混为一谈了。`},
+    {type:'battle',phase:'p3',round:2,side:'pro',name:proName[2],pos:'三辩',text:`没有房子，你连吵架的地方都没有。这不是物质，这是尊严。`},
+    {type:'battle',phase:'p3',round:2,side:'con',name:conName[2],pos:'三辩',text:`尊严不是用砖瓦堆出来的。我见过太多住着豪宅却毫无尊严的人。`},
+    {type:'battle',phase:'p3',round:3,side:'pro',name:proName[2],pos:'三辩',text:`至少房子给了你一个可以捍卫的边界，这是人的基本需求。`},
+    {type:'battle',phase:'p3',round:3,side:'con',name:conName[2],pos:'三辩',text:`你捍卫的到底是什么？是房子还是你的安全感？想清楚这个问题。`},
+    {type:'mentor_comment',name:mentorCommentNames.bp3,
+      text:'整场比赛都太精彩了，这就是辩论的魅力所在！'},
+    // 结尾
     {type:'closing',side:'con',name:conName[2],label:conLabel[2],
-      text:`说了这么多，我的立场其实很简单。结婚要不要买房？我的回答是：有钱就买，没钱别硬买。千万别让一套房子，毁掉两个人最该轻松快乐的几年。房子有的是，但那个愿意跟你一起面对一切的人，错过了，可能就真的回不来了。人间不值得，但身边的人值得。`},
+      text:`说了这么多，我的立场其实很简单。结婚要不要买房？我的回答是：有钱就买，没钱别硬买。千万别让一套房子，毁掉两个人最该轻松快乐的几年。房子有的是，但那个愿意跟你一起面对一切的人，错过了，可能就真的回不来了。`},
     {type:'closing',side:'pro',name:proName[2],label:proLabel[2],
-      text:`最后我想说——我们这一代人，总在说"逃离北上广"，总在说"租来的生活"。但你们有没有想过，当我们谈起婚姻的时候，我们到底在怕什么？我们怕的不是没有房子，我们怕的是没有根。房子从来不是目的，但它是我们在这个城市里，可以理直气壮说一句"我到家了"的那个地方。不是为了自己，是为了那个在门口等你回家的人。`},
-    // 终投
+      text:`最后我想说——我们这一代人，总在说"逃离北上广"，总在说"租来的生活"。但你们有没有想过，当我们谈起婚姻的时候，我们到底在怕什么？我们怕的不是没有房子，我们怕的是没有根。`},
     {type:'vote',stage:'final',pro:18,con:12,
       sways:[
-        {who:'观众 #07（大学生）',from:'反方',to:'正方',reason:'正方三辩开杠那句"给孩子确定性"让我想到了我爸妈。他们就是租房把我带大的，我知道那种没有安全感的感觉。'},
-        {who:'观众 #15（职场妈妈）',from:'反方',to:'正方',reason:'詹青云的二辩发言让我重新算了这笔账。长期来看，买房的确定性和强制储蓄确实有它的道理。'},
-        {who:'观众 #22（创业者）',from:'反方',to:'正方',reason:'黄执中结辩说的"到家了"三个字，我一个大老爷们眼睛湿了。十年创业，搬家七次，那滋味我知道。'},
-        {who:'观众 #29（退休大爷）',from:'正方',to:'反方',reason:'我本来支持买房的。但李诞那句"家是住出来的不是买出来的"让我想了很久。老伴走了以后，我守着这套大房子，空空荡荡的。'},
-        {who:'观众 #11（程序员）',from:'反方',to:'正方',reason:'陈铭的理性分析有数据支撑，逻辑上说服了我。'},
-        {who:'观众 #05（大学生）',from:'反方',to:'正方',reason:'傅首尔说得也有道理，但正方三辩那个故事太戳人了。我也想在结婚时给未来的她一个确定的坐标。'}
+        {who:'观众 #07（大学生）',from:'反方',to:'正方',reason:'正方三辩开杠那句"捍卫边界"让我想到了我爸妈。'},
+        {who:'观众 #15（职场妈妈）',from:'反方',to:'正方',reason:'詹青云的二辩发言让我重新算了这笔账。'},
+        {who:'观众 #22（创业者）',from:'正方',to:'反方',reason:'反方一辩那句"爱最重要"打动了我。'},
       ],
       winner:'正方翻盘！+6 票'},
     {type:'mentor',name:mentorName[0],title:(mentors[0]&&mentors[0].title)||'经济学视角',
-      text:`这场辩论双方都没说错。关键不在于房子本身，而在于——你是在买资产，还是在买自由？从经济学角度看，买房是一个重大的资产配置决策，不是情感决策。正方赢了辩论，但从理性角度看，反方也不是全无道理。这不是对错问题，是 trade-off 问题。`},
+      text:`这场辩论双方都没说错。关键不在于房子本身，而在于——你是在买资产，还是在买自由？从经济学角度看，买房是一个重大的资产配置决策，不是情感决策。`},
     {type:'mentor',name:mentorName[1],title:(mentors[1]&&mentors[1].title)||'温柔视角',
-      text:`我听完只有一个感受——你们都在算。算钱、算利率、算首付、算安全感。但婚姻不是算出来的。我见过住豪宅的夫妻相敬如"冰"，也见过十平米出租屋里相拥而眠的年轻人。买不买房，最后都是睡在一张床上。跟谁住，才重要。`},
+      text:`我听完只有一个感受——你们都在算。算钱、算利率、算首付、算安全感。但婚姻不是算出来的。买不买房，最后都是睡在一张床上。跟谁住，才重要。`},
     {type:'done'}
   ];
 }
@@ -742,7 +1177,6 @@ function scrollToBottom(){
   const stage=document.getElementById('stage');
   if(stage)stage.scrollTop=stage.scrollHeight;
 }
-// 移除加载占位
 function removeLoadingIndicator(){
   const el=document.getElementById('loadingIndicator');
   if(el)el.remove();
@@ -786,11 +1220,12 @@ function resumeTypewriter(){
   else if(typewriterState.resolve)typewriterState.resolve();
 }
 
+// 导师插话头像映射
+const MENTOR_EMOJI={'薛兆丰':'🧑‍🏫','蔡康永':'🎩','李诞':'🤡','刘擎':'🧑‍🏫','马东':'🎙️'};
+
 function renderStep(step){
   const container=document.getElementById('debateContent');
-  // 移除加载占位
   removeLoadingIndicator();
-  // 移除空状态
   const empty=container.querySelector('.stage-empty');
   if(empty)empty.remove();
 
@@ -802,6 +1237,7 @@ function renderStep(step){
       const feats=analyzeText(step.text);
       computeReactions(feats);
       updateEmotionPanel();
+      playAudio(step.audioUrl);
       return typeWrite(div,step.text).then(()=>{
         scrollToBottom();
       });
@@ -811,59 +1247,61 @@ function renderStep(step){
       const div=document.createElement('div');
       const side=step.side;
       div.className=`speech-bubble bubble-${side}`;
-      const labelText=step.pos?`${step.pos} ${step.name}`:step.name;
+      const labelText=step.name;
       const sideLabel=side==='pro'?'正方':'反方';
       div.innerHTML=`<div class="bubble-speaker">${sideLabel} · ${labelText}</div><div class="typing-area"></span>`;
       container.appendChild(div);
       scrollToBottom();
       const textSpan=div.querySelector('.typing-area');
-      // 先分析情绪
       const feats=analyzeText(step.text);
       computeReactions(feats);
       updateEmotionPanel();
-      // 跑票微波动
       if(voteHistory.length>0){
         const last=voteHistory[voteHistory.length-1].pro;
         const drift=Math.random()>0.5?1:-1;
         const newPro=Math.max(0,Math.min(30,last+drift));
         addRunoffPoint(newPro);
       }
+      playAudio(step.audioUrl);
       return typeWrite(textSpan,step.text).then(()=>{
         scrollToBottom();
       });
     }
     case 'battle':{
-      // 寻找或创建 battle 行
-      let battleRow=container.querySelector(`.cross-row-${step.round}`);
+      const phase=step.phase||'p1';
+      const phaseClass=phase==='p1'?'p1-battle':'p3-battle';
+      let battleRow=container.querySelector(`.cross-row-${phase}-${step.round}`);
       if(!battleRow){
         battleRow=document.createElement('div');
-        battleRow.className=`cross-exam-box cross-row-${step.round}`;
-        // 轮次标签
+        battleRow.className=`cross-exam-box ${phaseClass} cross-row-${phase}-${step.round}`;
         const label=document.createElement('div');
         label.className='cross-round';
-        label.textContent=`⚡ 开杠 Round ${step.round}/6`;
+        label.textContent=`⚡ Round ${step.round}/3`;
         battleRow.appendChild(label);
-        // 创建左右两侧
         const left=document.createElement('div');
         left.className='cross-col';
         const right=document.createElement('div');
         right.className='cross-col';
-        left.innerHTML='<div class="cross-side">正方</div><div class="cross-name"></div><div class="cross-text"></div><div class="cross-timer"></div>';
-        right.innerHTML='<div class="cross-side">反方</div><div class="cross-name"></div><div class="cross-text"></div><div class="cross-timer"></div>';
+        left.innerHTML='<div class="cross-side">正方</div><div class="cross-name"></div><div class="cross-text"></div>';
+        right.innerHTML='<div class="cross-side">反方</div><div class="cross-name"></div><div class="cross-text"></div>';
         battleRow.appendChild(left);
         battleRow.appendChild(right);
         container.appendChild(battleRow);
       }
       const sides=battleRow.querySelectorAll('.cross-col');
       const idx=step.side==='pro'?0:1;
-      const otherIdx=1-idx;
       sides[idx].querySelector('.cross-name').textContent='⚡ '+step.name;
-      sides[idx].querySelector('.cross-text').textContent=step.text;
-      sides[idx].classList.add('active');
-      sides[idx].querySelector('.cross-timer').style.width='100%'; // 重置计时条
-      sides[otherIdx].classList.remove('active');
+      const textEl=sides[idx].querySelector('.cross-text');
+      textEl.textContent=step.text;
+      // 如果有策略标签
+      if(step.strategyName){
+        const tag=document.createElement('span');
+        tag.className='cross-strategy-tag';
+        tag.textContent=step.strategyName;
+        sides[idx].querySelector('.cross-name').appendChild(tag);
+      }
+      sides[idx].classList.add('pro');
       scrollToBottom();
-      // 情绪 + 跑票
       const feats=analyzeText(step.text);
       computeReactions(feats);
       updateEmotionPanel();
@@ -873,18 +1311,17 @@ function renderStep(step){
         const newPro=Math.max(0,Math.min(30,last+drift));
         addRunoffPoint(newPro);
       }
+      playAudio(step.audioUrl);
       return Promise.resolve();
     }
     case 'vote':{
       const box=document.createElement('div');
       box.className='vote-box';
       const pctPro=Math.round(step.pro/30*100);
-      // 终投时对比初投
       const hasInitVote=lastInitialVoteData!==null;
       const initPro=hasInitVote?lastInitialVoteData.pro:0;
       const initCon=hasInitVote?lastInitialVoteData.con:0;
       const changePro=step.stage==='final'?step.pro-initPro:0;
-      const runoffs=step.stage==='final'?Math.abs(changePro):0;
 
       let title='📊 赛前投票';
       if(step.stage==='final'&&hasInitVote){
@@ -893,7 +1330,7 @@ function renderStep(step){
         title='📊 最终投票';
       }
 
-            box.innerHTML=`
+      box.innerHTML=`
         <div class="vote-title">${title}</div>
         <div style="display:flex;align-items:center;gap:6px">
           <span style="font-size:14px;font-weight:900;color:var(--blue);min-width:28px">正</span>
@@ -909,7 +1346,6 @@ function renderStep(step){
         </div>`:''}`;
       container.appendChild(box);
       scrollToBottom();
-      // 存储初投数据 + 跑票追踪
       if(step.stage==='initial'){
         lastInitialVoteData={pro:step.pro,con:step.con};
         setInitialVote(step.pro,step.con);
@@ -917,9 +1353,7 @@ function renderStep(step){
       }else{
         addRunoffPoint(step.pro);
       }
-      // 跑票卡片 + 跑票统计
       const allSways=step.sways||[];
-      // API details: 终投时与初投对比算跑票
       if(step.stage==='initial'&&step.details&&step.details.length){
         lastInitialVote=step.details;
       }
@@ -957,17 +1391,38 @@ function renderStep(step){
       }
       return new Promise(r=>setTimeout(r,800));
     }
-        case 'mentor':{
-      const eMap={'薛兆丰':'🧑‍🏫','蔡康永':'🎩','马东':'🎙️'};
+    case 'mentor_comment':{
+      const box=document.createElement('div');
+      box.className='mentor-comment-box';
+      const icon=MENTOR_EMOJI[step.name]||'🎙️';
+      const stanceLabel=step.stance==='pro'?'🔵正方':step.stance==='con'?'🔴反方':'';
+      box.innerHTML=`
+        <div class="mentor-comment-header">
+          <div class="mentor-comment-avatar">${icon}</div>
+          <div class="mentor-comment-name">${step.name}</div>
+          <div class="mentor-comment-tag">💬 插话${stanceLabel?' · '+stanceLabel:''}</div>
+        </div>
+        <div class="mentor-comment-text typing-area"></div>`;
+      container.appendChild(box);
+      scrollToBottom();
+      const textEl=box.querySelector('.typing-area');
+      return typeWrite(textEl,step.text).then(()=>{
+        scrollToBottom();
+      });
+    }
+    case 'mentor':{
+      const eMap={'薛兆丰':'🧑‍🏫','蔡康永':'🎩','李诞':'🤡','刘擎':'🧑‍🏫','马东':'🎙️'};
       const icon=Object.keys(eMap).find(k=>step.name.includes(k));
       document.getElementById('mentorBox').classList.remove('hidden');
       document.getElementById('mentorAvatar').textContent=icon?eMap[icon]:'🎙️';
-      document.getElementById('mentorName').textContent=step.name;
+      const stanceLabel=step.stance==='pro'?' 🔵正方':step.stance==='con'?' 🔴反方':'';
+      document.getElementById('mentorName').textContent=step.name+stanceLabel;
       const textEl=document.getElementById('mentorText');
       textEl.classList.add('typing-cursor');
+      playAudio(step.audioUrl);
       return typeWrite(textEl,step.text).then(()=>{textEl.classList.remove('typing-cursor');scrollToBottom();});
     }
-        case 'done':{
+    case 'done':{
       document.getElementById('statusBar').classList.remove('show');
       document.getElementById('btnPause').style.display='none';
       document.getElementById('btnSkip').style.display='none';
@@ -982,7 +1437,6 @@ function renderStep(step){
 }
 
 // ==================== API 数据标准化 ====================
-// 将后端 API 响应字段映射为 renderStep 能处理的格式
 function normalizeAPIStep(data){
   if(data.done) return {type:'done',status:data.status||'SUCCESS'};
   const step={
@@ -990,6 +1444,8 @@ function normalizeAPIStep(data){
     text:data.content||'',
     name:data.speakerName||'',
     side:data.side,
+    stance:data.stance||null,
+    audioUrl:data.audioUrl||null,
     flowProgress:data.flowProgress||null,
     degraded:data.degraded||false,
     attemptCount:data.attemptCount||1
@@ -1003,23 +1459,45 @@ function normalizeAPIStep(data){
     step.details=data.details||[];
   }
   if(data.type==='battle'){
-    const m=data.step&&data.step.match(/r(\d+)/);
-    step.round=m?parseInt(m[1]):1;
+    // 解析 battlePhase 和 battleTurn (step format: battle_p1_pro_1)
+    const m=data.step&&data.step.match(/battle_(p[13])_(pro|con)_(\d+)/);
+    if(m){
+      step.phase=m[1];
+      step.round=parseInt(m[3]);
+    }else{
+      step.phase='p1';
+      step.round=1;
+    }
+    step.pos=data.position||'third';
+    // 策略信息
+    if(data.strategyName) step.strategyName=data.strategyName;
   }
   if(data.type==='mentor') step.title=data.speakerTitle||'导师点评';
+  if(data.type==='mentor_comment') step.title='导师插话';
   return step;
 }
 
+// ==================== 开杠交互状态追踪 ====================
+let battleInteractionState={
+  phase:null,        // 'p1' | 'p3'
+  selectedSide:null, // 'pro' | 'con' | null (null=skip)
+  currentTurn:0,     // 0-3
+  strategies:{},     // { '1': 'strategyId', ... }
+  isActive:false,    // 当前是否处于开杠阶段
+};
+
 // ==================== 播放循环 ====================
-// 双模式：useMock=true → 遍历 mockSteps; false → 轮询 API
 async function playLoop(){
   if(playRunning)return;
   playRunning=true;
+
+  // 重置开杠交互状态
+  battleInteractionState={phase:null,selectedSide:null,currentTurn:0,strategies:{},isActive:false};
+
   while(true){
     if(skipRequested){
       skipRequested=false;
       if(useMock)currentStepIdx++;
-      // 跳过时更新情绪
       const feats=analyzeText('(跳过)');
       computeReactions(feats);updateEmotionPanel();
       continue;
@@ -1031,6 +1509,30 @@ async function playLoop(){
       if(currentStepIdx>=mockSteps.length)break;
       step=mockSteps[currentStepIdx];
       done=(step.type==='done');
+
+      // 模拟模式：检测到开杠环节即将开始
+      if(!done && step.type==='host' && step.text&&step.text.includes('开杠')){
+        const phase=(currentStepIdx<15)?'p1':'p3';
+        const selectedSide=await showSideSelectPanel(phase);
+        battleInteractionState.phase=phase;
+        battleInteractionState.selectedSide=selectedSide;
+        battleInteractionState.currentTurn=0;
+        battleInteractionState.strategies={};
+        battleInteractionState.isActive=(selectedSide!==null);
+      }
+
+      // 模拟模式：开杠中，为扮演方弹出策略选择
+      if(!done && step.type==='battle' && battleInteractionState.isActive && step.side===battleInteractionState.selectedSide){
+        battleInteractionState.currentTurn=step.round||1;
+        const turn=String(battleInteractionState.currentTurn);
+        const strategyId=await showStrategySelectPanel(battleInteractionState.phase, parseInt(turn), step.name);
+        if(strategyId){
+          battleInteractionState.strategies[turn]=strategyId;
+          const s=BATTLE_STRATEGIES.find(x=>x.id===strategyId);
+          if(s) step.strategyName=s.name;
+        }
+      }
+
     }else{
       try{
         const controller=new AbortController();
@@ -1043,6 +1545,46 @@ async function playLoop(){
         const raw=json.data;
         if(raw.done){done=true;step={type:'done',status:raw.status||'SUCCESS'}}
         else step=normalizeAPIStep(raw);
+
+        // API模式：检测到 host_battle 步骤 → 弹出选择扮演方面板
+        if(!done && step.type==='host'){
+          const stepName=raw.step||'';
+          if(stepName==='host_battle_p1'||stepName==='host_battle_p3'){
+            const phase=stepName==='host_battle_p1'?'p1':'p3';
+            const selectedSide=await showSideSelectPanel(phase);
+            await fetch(`/api/session/${sessionId}/battle/select-side`,{
+              method:'POST',
+              headers:{'Content-Type':'application/json'},
+              body:JSON.stringify({battlePhase:phase, side:selectedSide})
+            }).catch(e=>console.error('[API] select-side失败:', e.message));
+            battleInteractionState.phase=phase;
+            battleInteractionState.selectedSide=selectedSide;
+            battleInteractionState.currentTurn=0;
+            battleInteractionState.strategies={};
+            battleInteractionState.isActive=(selectedSide!==null);
+          }
+        }
+
+        // API模式：开杠中，为扮演方预提交下一轮策略
+        if(!done && step.type==='battle' && battleInteractionState.isActive && step.side===battleInteractionState.selectedSide){
+          battleInteractionState.currentTurn=step.round||1;
+          const turn=battleInteractionState.currentTurn;
+          if(!battleInteractionState.strategies[String(turn)]){
+            const debaterName=step.name||'';
+            const strategyId=await showStrategySelectPanel(battleInteractionState.phase, turn, debaterName);
+            if(strategyId){
+              battleInteractionState.strategies[String(turn)]=strategyId;
+              await fetch(`/api/session/${sessionId}/battle/strategy`,{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({battlePhase:battleInteractionState.phase, turn:turn, strategyId})
+              }).catch(e=>console.error('[API] strategy失败:', e.message));
+              const s=BATTLE_STRATEGIES.find(x=>x.id===strategyId);
+              if(s) step.strategyName=s.name;
+            }
+          }
+        }
+
     }catch(e){
       console.error('[API] /next 失败:', e.message);
       setAPIMode(false);
@@ -1064,8 +1606,10 @@ async function playLoop(){
     }
     // degraded 提示
     if(step.degraded)toast(`⚠️ 降级生成（第${step.attemptCount}次尝试）`);
+
     document.getElementById('statusBar').classList.remove('show');
     await renderStep(step);
+
     if(done||step.type==='done'){playRunning=false;return}
     const waitTime=step.type==='vote'?1200:step.type==='battle'?1000:800;
     await new Promise(r=>setTimeout(r,waitTime));
@@ -1086,10 +1630,8 @@ function getCurrentConfigFromSelects(){
     DEBATERS[parseInt(document.getElementById('con2').value)],
     DEBATERS[parseInt(document.getElementById('con3').value)]
   ];
-  const mentorSelect=document.getElementById('mentorSelect');
-  const mentors=[];
-  if(mentorSelect.value!=='')mentors.push(MENTORS[parseInt(mentorSelect.value)]);
-  if(mentors.length===0&&MENTORS.length>=2){mentors.push(MENTORS[0]);mentors.push(MENTORS[1])}
+  // 返回全部4位导师，不再从下拉框读取
+  const mentors = MENTORS ? [...MENTORS] : [];
   return [proTeam,conTeam,mentors];
 }
 
@@ -1112,8 +1654,10 @@ function togglePause(){
   document.getElementById('statusBar').classList.toggle('show',paused);
   if(paused){
     pauseTypewriter();
+    pauseAudio();
   }else{
     resumeTypewriter();
+    resumeAudio();
     if(!playRunning)playLoop();
   }
 }
@@ -1121,6 +1665,7 @@ function togglePause(){
 function skipStep(){
   skipRequested=true;
   pauseTypewriter();
+  stopAudio();
   if(paused)togglePause();
   if(!playRunning)playLoop();
 }
@@ -1136,10 +1681,12 @@ async function startDebate(){
   document.getElementById('btnStart').textContent='🎙️ 辩论中...';
   document.getElementById('configPanel').classList.add('hidden');
   document.getElementById('mainLayout').classList.remove('hidden');
+  document.getElementById('topicBanner').textContent=topic;
   document.getElementById('debateContent').innerHTML='';
   document.getElementById('statusBar').classList.remove('show');
   document.getElementById('btnPause').classList.add('show');
   document.getElementById('btnSkip').classList.add('show');
+  if(hasVoiceParam)document.getElementById('btnVoice').classList.add('show');
   document.getElementById('flowProgress').textContent='';
   paused=false;currentStepIdx=0;playRunning=false;skipRequested=false;useMock=true;
   document.getElementById('btnPause').textContent='⏸️ 暂停';
@@ -1155,7 +1702,7 @@ async function startDebate(){
     try{
       document.getElementById('statusBar').classList.add('show');
       document.getElementById('statusBar').textContent='⏳ 连接后端...';
-      const body={pro:proEls.map(i=>DEBATERS[parseInt(i)].id),con:conEls.map(i=>DEBATERS[parseInt(i)].id)};
+      const body={pro:proEls.map(i=>DEBATERS[parseInt(i)].id),con:conEls.map(i=>DEBATERS[parseInt(i)].id),voiceEnabled:hasVoiceParam};
       if(topicIndex>=0)body.topicIndex=topicIndex;
       if(custom)body.customTopic=custom;
       const res=await fetch('/api/session/start',{
@@ -1169,6 +1716,8 @@ async function startDebate(){
         useMock=false;
         localStorage.setItem('lastSessionId',sessionId);
         setAPIMode(true);
+        // 同步观众：从300人池中筛选出本场抽中的30人
+        await syncAudienceToSession(sessionId);
         toast('后端已连接，正在生成辩论...');
       }else throw new Error('API返回异常: code='+json.code);
     }catch(e){
@@ -1183,14 +1732,13 @@ async function startDebate(){
   }
   initEmotionEngine();
   lastInitialVote=null;
-      document.getElementById('statusBar').textContent='⏳ 正在生成...';
-      // 显示加载占位
-      const loadingEl=document.createElement('div');
-      loadingEl.id='loadingIndicator';
-      loadingEl.style.cssText='text-align:center;padding:30px;font-weight:900;font-size:15px;color:#666';
-      loadingEl.textContent='⏳ LLM 正在生成辩论内容...';
-      document.getElementById('debateContent').appendChild(loadingEl);
-      playLoop();
+  document.getElementById('statusBar').textContent='⏳ 正在生成...';
+  const loadingEl=document.createElement('div');
+  loadingEl.id='loadingIndicator';
+  loadingEl.style.cssText='text-align:center;padding:30px;font-weight:900;font-size:15px;color:#666';
+  loadingEl.textContent='⏳ LLM 正在生成辩论内容...';
+  document.getElementById('debateContent').appendChild(loadingEl);
+  playLoop();
 }
 
 function exportScript(){
@@ -1210,6 +1758,11 @@ function toast(msg){
 }
 
 // ==================== 初始化 ====================
+// 语音按钮：默认隐藏，?z 模式才显示
+document.getElementById('btnVoice').style.display = hasVoiceParam ? '' : 'none';
+if (hasVoiceParam) {
+  document.getElementById('btnVoice').textContent = '🔊 语音';
+}
 loadData();
 
 // Session 恢复检测
@@ -1222,6 +1775,8 @@ if(savedId){
       if(json.code===200&&json.data&&json.data.status==='RUNNING'){
         if(confirm(`检测到未完成的辩论（${json.data.topicTitle||''}），是否恢复？`)){
           sessionId=savedId;useMock=false;
+          // 同步观众到本场选中的30人
+          syncAudienceFromState(json.data);
           document.getElementById('configPanel').classList.add('hidden');
           document.getElementById('mainLayout').classList.remove('hidden');
           document.getElementById('btnPause').classList.add('show');
@@ -1230,7 +1785,7 @@ if(savedId){
           playLoop();
         }
       }
-    }catch(e){/* 后端不在线，忽略 */}
+    }catch(e){}
   },500);
 }
 </script>
