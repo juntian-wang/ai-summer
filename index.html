@@ -884,7 +884,7 @@ body {
   </div>
 </div>
 
-<div class="footer">AI CAN BB · I CAN I BB · 一档纯 AI 辩论节目 · 仅供娱乐</div>
+<div class="footer">AI CAN BB · 一档纯 AI 辩论节目 · 仅供娱乐</div>
 
 <!-- ===== 选择扮演方弹窗 ===== -->
 <div class="side-select-overlay" id="sideSelectOverlay">
@@ -1177,6 +1177,7 @@ function refreshAllReactions(){
 
 // ==================== 跑票追踪 ====================
 let voteHistory=[];
+let exportVoteReactions=[]; // [{label, pro, con, reactions: [{viewer, emoji, reaction}]}] 
 function initRunoff(proVotes){
   voteHistory=[{pro:proVotes,con:30-proVotes}];
   updateVoteTugOfWar();
@@ -1877,6 +1878,19 @@ function normalizeAPIStep(data){
     step.details=data.details||[];
     // 存储本轮投票的观众感想
     if(data.latestReactions) latestReactions=data.latestReactions;
+    // 累积导出用：每位观众的名字、表情、投票选择、感想
+    if(data.details && data.details.length > 0){
+      const rnd = {label: data.label||'vote', pro: data.pro, con: data.con, viewers: []};
+      data.details.forEach(v => {
+        const a = AUDIENCE.find(x => x.id === v.viewerId);
+        rnd.viewers.push({
+          label: (a && a.label) || v.label || '观众',
+          choice: v.choice,
+          reaction: v.reaction || ''
+        });
+      });
+      exportVoteReactions.push(rnd);
+    }
   }
   if(data.type==='battle'){
     // 解析 battlePhase 和 battleTurn (step format: battle_p1_pro_1)
@@ -2167,11 +2181,31 @@ async function startDebate(){
 }
 
 function exportScript(){
-  const text=document.getElementById('debateContent').innerText;
-  const blob=new Blob([text],{type:'text/plain'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download=`ai-qipashuo-${new Date().toISOString().slice(0,10)}.txt`;
+  let text = document.getElementById('debateContent').innerText;
+
+  // 追加每轮投票的30位观众感想
+  if(exportVoteReactions.length > 0){
+    text += '\n\n━━━━━━━━━━━━━━━━━━━━\n';
+    text += '🎭 全场观众投票记录（每轮30人）\n';
+    text += '━━━━━━━━━━━━━━━━━━━━\n\n';
+
+    const labels = {init:'赛前初投', mid:'中段投票', final:'最终投票'};
+    exportVoteReactions.forEach((rnd, i) => {
+      const label = labels[rnd.label] || `第${i+1}轮投票`;
+      text += `【${label}】正方 ${rnd.pro} : 反方 ${rnd.con}\n`;
+      text += `${'─'.repeat(40)}\n`;
+      rnd.viewers.forEach(v => {
+        const sideMark = v.choice === 'pro' ? '🔵正方' : v.choice === 'con' ? '🔴反方' : '⚪弃权';
+        text += `${v.label}  ${sideMark}  ${v.reaction}\n`;
+      });
+      text += '\n';
+    });
+  }
+
+  const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `ai-qipashuo-${new Date().toISOString().slice(0,10)}.txt`;
   a.click();
 }
 
