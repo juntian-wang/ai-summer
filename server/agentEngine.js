@@ -98,13 +98,13 @@ async function callLLM(messages, timeoutMs) {
  * @returns {string} 摘要文本
  */
 function getMemorySummary(memory, maxEntries) {
-  maxEntries = maxEntries || 10;
+  maxEntries = maxEntries || 999;
   if (!memory || memory.length === 0) return '（暂无之前发言）';
 
   const recent = memory.slice(-maxEntries);
   return recent.map(m => {
     const sideLabel = m.side === 'pro' ? '正方' : m.side === 'con' ? '反方' : '';
-    return `【${m.step}】${sideLabel} ${m.speakerName}: ${m.content.substring(0, 100)}`;
+    return `【${m.step}】${sideLabel} ${m.speakerName}: ${m.content}`;
   }).join('\n');
 }
 
@@ -131,20 +131,23 @@ function pickRandom(arr, count) {
  * @returns {Array} messages数组
  */
 function buildHostPrompt(session, flowStep, hostProfile) {
-  const systemPrompt = `你是${hostProfile.name}，${hostProfile.persona}。
-说话规则：
-${hostProfile.speaking_rules.map(r => `- ${r}`).join('\n')}
-禁止：
-${hostProfile.forbidden.map(r => `- ${r}`).join('\n')}`;
+  const examplesStr = (hostProfile.example_speeches && hostProfile.example_speeches.length > 0)
+    ? `\n\n格式参考：\n${hostProfile.example_speeches.map(s => `- ${s}`).join('\n')}`
+    : '';
 
-  const memorySummary = getMemorySummary(session.memory, 5);
+  const systemPrompt = `你是${hostProfile.name}。${hostProfile.persona}
+${hostProfile.speaking_rules.map(r => `- ${r}`).join('\n')}
+${hostProfile.forbidden.map(r => `- ${r}`).join('\n')}${examplesStr}`;
+
+  const memorySummary = getMemorySummary(session.memory, 999);
 
   const userPrompt = `辩题：${session.topicTitle}
 当前环节：${flowStep.role}
-之前发言摘要：
+之前发言：
 ${memorySummary}
 
-请以${hostProfile.name}的风格进行${flowStep.role}串场。要求自然流畅，串联前后环节。`;
+直接说话，不要加任何角色标记。不要加括号说明。不要描述你在做什么。
+如果是开场环节，只聊辩题，最后说'好，请各位观众投票'。不要介绍任何辩手，介绍辩手是后面的环节。`;
 
   return [
     { role: 'system', content: systemPrompt },
@@ -168,18 +171,21 @@ function buildSpeechPrompt(session, flowStep, debater) {
 ${debater.speakingRules.map(r => `- ${r}`).join('\n')}
 禁止：
 ${debater.forbidden.map(r => `- ${r}`).join('\n')}
+- 禁止使用台本、舞台说明（如"（笑）、（鼓掌）"等括号动作描述）。只说辩论内容本身。
 开场风格：${debater.openingStyle}
 金句参考：
 ${randomLines.map(l => `- "${l}"`).join('\n')}`;
 
-  // 构造对方已说内容摘要
-  const oppositeSide = flowStep.side === 'pro' ? 'con' : 'pro';
-  const opponentMemories = session.memory.filter(
-    m => m.side === oppositeSide && (m.type === 'speech' || m.type === 'battle' || m.type === 'closing')
+  // 构造之前所有发言的完整上下文（自己队友 + 对手 + 主持人评论）
+  const allPrevious = session.memory.filter(
+    m => m.type === 'speech' || m.type === 'battle' || m.type === 'closing' || m.type === 'host'
   );
-  const opponentSummary = opponentMemories.length > 0
-    ? opponentMemories.map(m => `【${m.speakerName}】: ${m.content.substring(0, 150)}`).join('\n')
-    : '（暂无对方发言）';
+  const fullContext = allPrevious.length > 0
+    ? allPrevious.map(m => {
+        const sideLabel = m.side === 'pro' ? '正方' : m.side === 'con' ? '反方' : '';
+        return `【${m.speakerName}】(${sideLabel}): ${m.content}`;
+      }).join('\n---\n')
+    : '（暂无之前发言）';
 
   // 根据position说明任务差异
   const positionMap = {
@@ -194,8 +200,8 @@ ${randomLines.map(l => `- "${l}"`).join('\n')}`;
 你的位置：${flowStep.position}辩
 任务说明：${positionInstruction}
 
-对方已说内容：
-${opponentSummary}
+之前所有发言（含队友、对手、主持人）：
+${fullContext}
 
 请以${debater.name}的风格进行辩论发言。注意不要添加角色标记（如"正方："等），直接开始你的发言。`;
 
@@ -206,7 +212,7 @@ ${opponentSummary}
 }
 
 /**
- * 构建开杠Prompt
+ * 构建开杠Prompt（全自动/非扮演方默认）
  * @param {Object} session - Session对象
  * @param {Object} flowStep - 当前流程步骤
  * @param {Object} debater - 辩手Profile
@@ -216,21 +222,84 @@ ${opponentSummary}
 function buildBattlePrompt(session, flowStep, debater, lastOpponentSpeech) {
   const randomLines = pickRandom(debater.exampleLines || [], 2);
 
+  const positionLabel = flowStep.position === 'first' ? '一辩' : flowStep.position === 'third' ? '三辩' : flowStep.position + '辩';
+
   const systemPrompt = `你是${debater.name}辩手，风格标签：${debater.label}。
 人设：${debater.persona}
 说话规则：
 ${debater.speakingRules.map(r => `- ${r}`).join('\n')}
 禁止：
 ${debater.forbidden.map(r => `- ${r}`).join('\n')}
+- 禁止使用台本、舞台说明（如"（笑）、（鼓掌）"等括号动作描述）。只说辩论内容本身。
 金句参考：
 ${randomLines.map(l => `- "${l}"`).join('\n')}
 
 注意：本轮是开杠环节（自由辩论），必须正面回应对方上一轮的核心观点，短促有力。
-50-150字，像连珠炮一样直接攻击对方逻辑漏洞。不要长篇大论，不要做价值升华。`;
+${flowStep.wordCount ? `${flowStep.wordCount}字` : '50-150字'}，像连珠炮一样直接攻击对方逻辑漏洞。不要长篇大论，不要做价值升华。`;
+
+  const battlePhaseLabel = flowStep.battlePhase === 'p1' ? '一辩开杠' : flowStep.battlePhase === 'p3' ? '三辩开杠' : '开杠';
 
   const userPrompt = `辩题：${session.topicTitle}
 你的立场：${flowStep.side === 'pro' ? '正方' : '反方'}
-开杠轮次：第${flowStep.round}轮
+开杠环节：${battlePhaseLabel}
+你的位置：${positionLabel}
+开杠轮次：第${flowStep.battleTurn}轮
+
+对方上一轮发言：
+"${lastOpponentSpeech || '（开场发言）'}"
+
+请直接、犀利地回应对方的核心观点。`;
+
+  return [
+    { role: 'system', content: systemPrompt },
+    { role: 'user', content: userPrompt },
+  ];
+}
+
+/**
+ * 构建带策略的开杠Prompt
+ * @param {Object} session - Session对象
+ * @param {Object} flowStep - 当前流程步骤
+ * @param {Object} debater - 辩手Profile
+ * @param {string} lastOpponentSpeech - 对方上一轮发言内容
+ * @param {Object} strategy - 策略对象
+ * @returns {Array} messages数组
+ */
+function buildBattleStrategyPrompt(session, flowStep, debater, lastOpponentSpeech, strategy) {
+  const randomLines = pickRandom(debater.exampleLines || [], 2);
+
+  const positionLabel = flowStep.position === 'first' ? '一辩' : flowStep.position === 'third' ? '三辩' : flowStep.position + '辩';
+
+  // 根据轮次估算秒数
+  const turnNum = flowStep.battleTurn || 1;
+  const secondsMap = { 1: '15', 2: '15', 3: '10' };
+  const seconds = secondsMap[turnNum] || '15';
+
+  const systemPrompt = `你是${debater.name}辩手，风格标签：${debater.label}。
+人设：${debater.persona}
+说话规则：
+${debater.speakingRules.map(r => `- ${r}`).join('\n')}
+禁止：
+${debater.forbidden.map(r => `- ${r}`).join('\n')}
+- 禁止使用台本、舞台说明（如"（笑）、（鼓掌）"等括号动作描述）。只说辩论内容本身。
+金句参考：
+${randomLines.map(l => `- "${l}"`).join('\n')}
+
+注意：本轮是开杠环节（自由辩论），必须正面回应对方上一轮的核心观点，短促有力。
+${flowStep.wordCount ? `${flowStep.wordCount}字` : '50-150字'}，像连珠炮一样直接攻击对方逻辑漏洞。不要长篇大论，不要做价值升华。`;
+
+  const battlePhaseLabel = flowStep.battlePhase === 'p1' ? '一辩开杠' : flowStep.battlePhase === 'p3' ? '三辩开杠' : '开杠';
+
+  const userPrompt = `辩题：${session.topicTitle}
+你的立场：${flowStep.side === 'pro' ? '正方' : '反方'}
+开杠环节：${battlePhaseLabel}
+你的位置：${positionLabel}
+开杠轮次：第${flowStep.battleTurn}轮
+
+当前是开杠环节，每方共有 45 秒总计时（约 150-180 字）。
+你是${debater.name}（${positionLabel}），请针对对方上一轮发言进行回应。
+本轮发言约 ${flowStep.wordCount || '50-80'} 字（模拟约 ${seconds} 秒口播），短促有力，不要长篇大论。
+策略指令：${strategy.promptInstruction}
 
 对方上一轮发言：
 "${lastOpponentSpeech || '（开场发言）'}"
@@ -259,17 +328,18 @@ function buildClosingPrompt(session, flowStep, debater) {
 ${debater.speakingRules.map(r => `- ${r}`).join('\n')}
 禁止：
 ${debater.forbidden.map(r => `- ${r}`).join('\n')}
+- 禁止使用台本、舞台说明（如"（笑）、（鼓掌）"等括号动作描述）。只说辩论内容本身。
 金句参考：
 ${randomLines.map(l => `- "${l}"`).join('\n')}
 
 注意：本轮是结辩环节。${flowStep.side === 'con' ? '反方先结辩' : '正方最后收尾'}。
 200-300字，升华总结全场比赛，不要提出新论点，着重价值升华和情感收尾。`;
 
-  // 整场比赛的精彩片段
+  // 整场比赛的完整回顾
   const debateSummary = session.memory.filter(m => m.type !== 'vote' && m.type !== 'host')
     .map(m => {
       const sideLabel = m.side === 'pro' ? '正方' : m.side === 'con' ? '反方' : '';
-      return `【${sideLabel}】${m.speakerName}: ${m.content.substring(0, 100)}`;
+      return `【${sideLabel}】${m.speakerName}: ${m.content}`;
     }).join('\n');
 
   const userPrompt = `辩题：${session.topicTitle}
@@ -287,13 +357,13 @@ ${debateSummary}
 }
 
 /**
- * 构建导师点评Prompt
+ * 构建导师点评Prompt（正式点评）
  * @param {Object} session - Session对象
  * @param {Object} flowStep - 当前流程步骤
  * @param {Object} mentorProfile - 导师Profile
  * @returns {Array} messages数组
  */
-function buildMentorPrompt(session, flowStep, mentorProfile) {
+function buildMentorPrompt(session, flowStep, mentorProfile, mentorStance) {
   const toolsStr = (mentorProfile.analytical_tools || [])
     .map(t => `- ${t}`).join('\n');
   const rulesStr = (mentorProfile.speaking_rules || [])
@@ -303,6 +373,8 @@ function buildMentorPrompt(session, flowStep, mentorProfile) {
   const quotesStr = (mentorProfile.example_quotes || [])
     .map(q => `- "${q}"`).join('\n');
 
+  const stanceLabel = mentorStance === 'pro' ? '正方' : mentorStance === 'con' ? '反方' : '中立';
+
   const systemPrompt = `你是${mentorProfile.name}，${mentorProfile.persona}。
 分析工具：
 ${toolsStr}
@@ -310,10 +382,12 @@ ${toolsStr}
 ${rulesStr}
 禁止：
 ${forbiddenStr}
+- 禁止使用台本、舞台说明（如"（笑）、（点头）"等括号动作描述）。只说点评内容本身。
 经典语录参考：
 ${quotesStr}
 
-注意：不要打分，不要选边站队，只提供新角度和深度点评。150-300字。`;
+注意：150-300字。
+你目前持【${stanceLabel}】立场，请从你的专业视角提供有启发性的观点和深度点评，可以选边站队，但要有理有据。`;
 
   const fullDebate = session.memory.filter(m => m.type !== 'vote')
     .map(m => {
@@ -326,7 +400,50 @@ ${quotesStr}
 完整辩论内容：
 ${fullDebate}
 
-请以${mentorProfile.name}的独特视角，对这场辩论进行点评。不要打分，不要选边，从你的专业角度提供有启发性的观点。`;
+请以${mentorProfile.name}的独特视角，对这场辩论进行点评。
+你目前持【${stanceLabel}】立场，请从你的专业角度提供有启发性的观点。`;
+
+  return [
+    { role: 'system', content: systemPrompt },
+    { role: 'user', content: userPrompt },
+  ];
+}
+
+/**
+ * 构建导师插话Prompt（简短即兴点评）
+ * @param {Object} session - Session对象
+ * @param {Object} flowStep - 当前流程步骤
+ * @param {Object} mentorProfile - 导师Profile
+ * @returns {Array} messages数组
+ */
+function buildMentorCommentPrompt(session, flowStep, mentorProfile, mentorStance) {
+  const quotesStr = (mentorProfile.example_quotes || [])
+    .map(q => `- "${q}"`).join('\n');
+
+  const stanceLabel = mentorStance === 'pro' ? '正方' : mentorStance === 'con' ? '反方' : '中立';
+
+  const systemPrompt = `你是${mentorProfile.name}，${mentorProfile.persona}。
+经典语录参考：
+${quotesStr}
+
+注意：用一两句话简短点评刚才的辩论，30-60字。
+你目前持【${stanceLabel}】立场，请从你的专业视角给出有意思的点评。
+不要长篇大论，给出一个有趣的角度即可。`;
+
+  // 获取最近的几段发言
+  const recentMemories = session.memory.slice(-8)
+    .map(m => {
+      const sideLabel = m.side === 'pro' ? '正方' : m.side === 'con' ? '反方' : '';
+      return `【${sideLabel}】${m.speakerName}: ${m.content}`;
+    }).join('\n');
+
+  const userPrompt = `辩题：${session.topicTitle}
+
+最近的辩论内容：
+${recentMemories}
+
+作为${mentorProfile.name}，请用一两句话简短点评刚才的辩论（30-60字）。直接输出点评内容，不要加角色前缀。
+你目前持【${stanceLabel}】立场。`;
 
   return [
     { role: 'system', content: systemPrompt },
@@ -344,10 +461,12 @@ function buildSimplifiedPrompt(session, flowStep) {
   const sideMap = { pro: '正方', con: '反方' };
   const typeLabels = {
     host: '主持人串场',
+    host_template: '主持人串场',
     speech: '辩论发言',
     battle: '开杠',
     closing: '结辩',
     mentor: '导师点评',
+    mentor_comment: '导师插话',
   };
 
   let sideInfo = '';
@@ -360,7 +479,7 @@ function buildSimplifiedPrompt(session, flowStep) {
     positionInfo = `位置：${flowStep.position}辩`;
   }
 
-  const memorySummary = getMemorySummary(session.memory, 8);
+  const memorySummary = getMemorySummary(session.memory, 999);
 
   const userPrompt = `辩题：${session.topicTitle}
 环节：${typeLabels[flowStep.type] || flowStep.step}
@@ -418,8 +537,9 @@ function validateOutput(output, flowStep) {
     speech: { min: 100, max: 600 },
     battle: { min: 20, max: 200 },
     closing: { min: 100, max: 400 },
-    host: { min: 50, max: 300 },
+    host: { min: 30, max: 400 },
     mentor: { min: 100, max: 400 },
+    mentor_comment: { min: 20, max: 100 },
   };
 
   const range = lengthRanges[flowStep.type];
@@ -430,7 +550,6 @@ function validateOutput(output, flowStep) {
     } else if (length > range.max) {
       warnings.push(`字数过多(${length}>${range.max})`);
       // 字数过多不判定为无效，但标记警告
-      warnings.push(`字数过多(${length}>${range.max})`);
     }
   }
 
@@ -499,6 +618,7 @@ function validateBattleResponse(output, session, flowStep) {
 function generateFallbackContent(flowStep, session) {
   switch (flowStep.type) {
     case 'host':
+    case 'host_template':
       return '（主持人串场中...）';
     case 'speech':
       return '（辩论暂时中断...此发言跳过）';
@@ -508,6 +628,8 @@ function generateFallbackContent(flowStep, session) {
       return '（结辩中断...）';
     case 'mentor':
       return '（导师点评暂时无法获取...）';
+    case 'mentor_comment':
+      return '（导师插话暂时无法获取...）';
     default:
       return '（内容暂缺）';
   }
@@ -526,8 +648,12 @@ function getDebaterForStep(session, flowStep) {
   if (flowStep.type === 'speech') {
     return team.find(d => d.assignedPosition === flowStep.position) || null;
   }
-  if (flowStep.type === 'battle' || flowStep.type === 'closing') {
-    // 开杠和结辩默认由三辩执行
+  if (flowStep.type === 'battle') {
+    // 开杠根据 position 字段查找对应辩位的辩手
+    return team.find(d => d.assignedPosition === flowStep.position) || null;
+  }
+  if (flowStep.type === 'closing') {
+    // 结辩默认由三辩执行
     return team.find(d => d.assignedPosition === 'third') || null;
   }
   return null;
@@ -536,7 +662,7 @@ function getDebaterForStep(session, flowStep) {
 /**
  * 获取对方上一轮发言
  * @param {Object} session - Session对象
- @param {Object} flowStep - 当前流程步骤
+ * @param {Object} flowStep - 当前流程步骤
  * @returns {string|null} 对方发言内容
  */
 function getLastOpponentSpeech(session, flowStep) {
@@ -562,14 +688,59 @@ function getLastOpponentBattleSpeech(session, flowStep) {
 }
 
 /**
+ * 获取导师插话的轮换方案
+ * @param {string} phase - 插话阶段: 'p1' | 'bp1' | 'p2' | 'p3' | 'bp3'
+ * @param {Array} mentors - 导师数组
+ * @returns {Object} 导师Profile
+ */
+function getMentorForComment(phase, mentors) {
+  if (!mentors || mentors.length === 0) return null;
+
+  // 导师轮换方案
+  const mentorMap = {
+    'p1': 0,   // 薛兆丰
+    'bp1': 3,  // 李诞
+    'p2': 2,   // 蔡康永
+    'p3': 1,   // 刘擎
+  };
+
+  if (phase === 'bp3') {
+    // 随机从4人中选
+    const idx = Math.floor(Math.random() * mentors.length);
+    return mentors[idx];
+  }
+
+  const mentorIdx = mentorMap[phase];
+  if (mentorIdx !== undefined && mentors[mentorIdx]) {
+    return mentors[mentorIdx];
+  }
+
+  // 兜底：随机选
+  return mentors[Math.floor(Math.random() * mentors.length)];
+}
+
+/**
  * 执行一个流程步骤（核心函数）
  * @param {Object} session - Session对象
  * @param {Object} flowStep - 当前流程步骤
+ * @param {Object} extraOptions - 额外选项（可选）
  * @returns {Promise<Object>} {success, content, attemptCount, degraded, error}
  */
-async function executeStep(session, flowStep) {
+async function executeStep(session, flowStep, extraOptions) {
   const hostProfile = sessionStore.getHostProfile();
   const mentors = sessionStore.getAllMentors();
+
+  // host_template 步骤不应进入 LLM 引擎（server.js 已拦截）；兜底返回零 LLM 占位
+  if (flowStep.type === 'host_template') {
+    console.warn('[agentEngine] host_template 不应进入LLM引擎（server.js 已拦截），返回占位');
+    return {
+      success: true,
+      content: generateFallbackContent(flowStep, session),
+      attemptCount: 0,
+      degraded: true,
+      error: null,
+    };
+  }
 
   let attemptCount = 0;
   let degraded = false;
@@ -601,7 +772,13 @@ async function executeStep(session, flowStep) {
             throw new Error(`未找到${flowStep.side === 'pro' ? '正方' : '反方'}开杠辩手`);
           }
           const lastOpponent = getLastOpponentBattleSpeech(session, flowStep);
-          messages = buildBattlePrompt(session, flowStep, debater, lastOpponent);
+
+          // 检查是否有策略注入
+          if (extraOptions && extraOptions.strategy) {
+            messages = buildBattleStrategyPrompt(session, flowStep, debater, lastOpponent, extraOptions.strategy);
+          } else {
+            messages = buildBattlePrompt(session, flowStep, debater, lastOpponent);
+          }
           break;
 
         case 'closing':
@@ -617,8 +794,22 @@ async function executeStep(session, flowStep) {
           if (!mentor) {
             throw new Error(`未找到导师[${flowStep.idx}]`);
           }
-          messages = buildMentorPrompt(session, flowStep, mentor);
+          const mentorStance = session.mentorStances ? session.mentorStances[mentor.id] : null;
+          messages = buildMentorPrompt(session, flowStep, mentor, mentorStance);
           break;
+
+        case 'mentor_comment': {
+          // 获取导师轮换方案
+          const mentorProfile = getMentorForComment(flowStep.phase, mentors);
+          if (!mentorProfile) {
+            throw new Error(`未找到插话导师[phase=${flowStep.phase}]`);
+          }
+          // 如果 extraOptions 传入了 mentorProfile，优先使用
+          const actualMentor = (extraOptions && extraOptions.mentorProfile) || mentorProfile;
+          const commentStance = session.mentorStances ? session.mentorStances[actualMentor.id] : null;
+          messages = buildMentorCommentPrompt(session, flowStep, actualMentor, commentStance);
+          break;
+        }
 
         default:
           throw new Error(`未知步骤类型: ${flowStep.type}`);
@@ -719,12 +910,16 @@ module.exports = {
   buildHostPrompt,
   buildSpeechPrompt,
   buildBattlePrompt,
+  buildBattleStrategyPrompt,
   buildClosingPrompt,
   buildMentorPrompt,
+  buildMentorCommentPrompt,
   buildSimplifiedPrompt,
   validateOutput,
   validateBattleResponse,
   extractKeywords,
   generateFallbackContent,
+  getDebaterForStep,
+  getMentorForComment,
   executeStep,
 };

@@ -27,7 +27,8 @@ function sleep(ms) {
  * @returns {Promise<Object>} VoteRecord
  */
 async function executeVote(session, voteType, viewerProfiles) {
-  console.log(`[viewerEngine] 开始${voteType === 'init' ? '初投' : '终投'}...`);
+  const voteTypeLabel = voteType === 'init' ? '初投' : voteType === 'final' ? '终投' : `环节投票(${voteType})`;
+  console.log(`[viewerEngine] 开始${voteTypeLabel}...`);
 
   // 分批并行投票
   const voteResult = await batchVote(viewerProfiles, session, voteType);
@@ -39,12 +40,9 @@ async function executeVote(session, voteType, viewerProfiles) {
     return filled;
   }
 
-  console.log(`[viewerEngine] ${voteType === 'init' ? '初投' : '终投'}完成: 正方${voteResult.proCount}票, 反方${voteResult.conCount}票, 弃权${voteResult.abstainCount}票`);
+  console.log(`[viewerEngine] ${voteTypeLabel}完成: 正方${voteResult.proCount}票, 反方${voteResult.conCount}票, 弃权${voteResult.abstainCount}票`);
   return voteResult;
 }
-
-// ===== 批处理投票 =====
-
 /**
  * 分批并行投票（30人分6批，每批5人）
  * @param {Array} viewers - 观众Profile数组
@@ -94,6 +92,7 @@ async function batchVote(viewers, session, voteType) {
           choice: result.choice,
           reason: result.reason,
           confidence: result.confidence,
+          reaction: result.reaction || '',
         });
 
         if (result.choice === 'pro') proCount++;
@@ -224,7 +223,9 @@ function buildVotePrompt(viewer, session, voteType, fullDebateSummary) {
 请根据你的人生经历、价值观和性格倾向，给出你的真实投票。选择支持正方(pro)、反方(con)或弃权(abstain)。
 注意：你的投票理由应该基于你真实的人生经历和价值观，不要给出和你人设矛盾的理由。
 
-回复JSON格式：{"choice":"pro","reason":"...","confidence":0.8}`;
+另外，请用一句话写下你此刻的感想（100字以内），就像你坐在观众席上跟着辩论走心了一样。
+
+回复JSON格式：{"choice":"pro","reason":"...","confidence":0.8,"reaction":"..."}`;
 }
 
 /**

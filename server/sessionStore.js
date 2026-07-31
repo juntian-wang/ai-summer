@@ -15,6 +15,7 @@ let _debatersCache = null;
 let _audienceCache = null;
 let _refereeCache = null;
 let _mentorsCache = null;
+let _battleStrategiesCache = null;
 
 // 数据目录路径
 const DATA_DIR = path.resolve(__dirname, '..', 'data');
@@ -50,14 +51,25 @@ function loadAllData() {
     const referee = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'referee.json'), 'utf-8'));
     const mentors = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'mentors.json'), 'utf-8'));
 
+    // 加载辩论策略
+    const battleStrategiesPath = path.join(DATA_DIR, 'battle_strategies.json');
+    let battleStrategies = [];
+    if (fs.existsSync(battleStrategiesPath)) {
+      battleStrategies = JSON.parse(fs.readFileSync(battleStrategiesPath, 'utf-8'));
+      console.log(`[sessionStore] 加载辩论策略: ${battleStrategies.length}个策略`);
+    } else {
+      console.warn('[sessionStore] battle_strategies.json 不存在，使用空策略列表');
+    }
+
     _topicsCache = topics;
     _debatersCache = debaters;
     _audienceCache = audience;
     _refereeCache = referee;
     _mentorsCache = mentors;
+    _battleStrategiesCache = battleStrategies;
 
-    _dataCache = { topics, debaters, audience, referee, mentors };
-    console.log(`[sessionStore] 数据加载完成: ${topics.length}个辩题, ${debaters.length}个辩手, ${audience.length}个观众, ${mentors.length}个导师`);
+    _dataCache = { topics, debaters, audience, referee, mentors, battleStrategies };
+    console.log(`[sessionStore] 数据加载完成: ${topics.length}个辩题, ${debaters.length}个辩手, ${audience.length}个观众, ${mentors.length}个导师, ${battleStrategies.length}个策略`);
     return _dataCache;
   } catch (err) {
     console.error('[sessionStore] 数据加载失败:', err.message);
@@ -110,6 +122,15 @@ function loadMentors() {
   return _mentorsCache;
 }
 
+/**
+ * 加载辩论策略
+ * @returns {Array} 辩论策略数组
+ */
+function loadBattleStrategies() {
+  if (!_battleStrategiesCache) loadAllData();
+  return _battleStrategiesCache;
+}
+
 // ===== 对外暴露的缓存访问方法（供其他模块使用）=====
 
 /**
@@ -152,6 +173,42 @@ function sampleAudience(count) {
  */
 function getAllMentors() {
   return loadMentors();
+}
+
+/**
+ * 为导师分配立场，确保 2 正方 2 反方
+ * @param {Array} mentors - 导师数组
+ * @returns {Object} { mentorId: 'pro'|'con', ... }
+ */
+function assignMentorStances(mentors) {
+  const stances = ['pro', 'pro', 'con', 'con'];
+  // Fisher-Yates 洗牌
+  for (let i = stances.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [stances[i], stances[j]] = [stances[j], stances[i]];
+  }
+  const result = {};
+  mentors.forEach((m, i) => {
+    result[m.id] = stances[i];
+  });
+  return result;
+}
+
+/**
+ * 获取指定 Session 的导师立场
+ * @param {Object} session - Session对象
+ * @returns {Object} { mentorId: 'pro'|'con', ... }
+ */
+function getMentorStances(session) {
+  return session.mentorStances || {};
+}
+
+/**
+ * 获取所有辩论策略（对外接口）
+ * @returns {Array} 辩论策略数组
+ */
+function getAllStrategies() {
+  return loadBattleStrategies();
 }
 
 /**
@@ -234,6 +291,10 @@ function createSession(topicIndex, proTeamIds, conTeamIds, customTopic) {
     };
   });
 
+  // 为每位导师分配随机立场（2正方2反方）
+  const allMentors = loadMentors();
+  const mentorStances = assignMentorStances(allMentors);
+
   const sessionId = uuidv4();
 
   const now = Date.now();
@@ -259,8 +320,26 @@ function createSession(topicIndex, proTeamIds, conTeamIds, customTopic) {
       totalRetries: 0,
       totalDegrades: 0,
     },
+    mentorStances: mentorStances,  // { xuezhaofeng: 'pro', liuqin: 'con', ... }
     createdAt: now,
     lastAccessedAt: now,
+    // 开杠控制器：支持用户选择扮演方和策略
+    battleController: {
+      p1: {
+        selectedSide: null,    // 'pro' | 'con' | null (null=全自动)
+        playingSide: null,     // 当前正在扮演的一方
+        currentTurn: 0,        // 当前轮到第几轮(1-3)
+        strategies: {},        // { '1': 'strategyId', '2': 'strategyId', '3': 'strategyId' }
+        battleOrder: ['pro', 'con', 'pro', 'con', 'pro', 'con'],  // 发言顺序，动态生成
+      },
+      p3: {
+        selectedSide: null,
+        playingSide: null,
+        currentTurn: 0,
+        strategies: {},
+        battleOrder: ['pro', 'con', 'pro', 'con', 'pro', 'con'],
+      },
+    },
   };
 
   _sessions.set(sessionId, session);
@@ -374,9 +453,13 @@ module.exports = {
   loadAudience,
   loadReferee,
   loadMentors,
+  loadBattleStrategies,
   getAllAudience,
   sampleAudience,
   getAllMentors,
+  assignMentorStances,
+  getMentorStances,
+  getAllStrategies,
   getHostProfile,
   createSession,
   getSession,

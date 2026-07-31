@@ -3,3 +3,7 @@ node_modules/
 .DS_Store
 *.log
 data/books/
+*.bak
+.workbuddy/deploy_key
+.workbuddy/deploy_key.pub
+server/audio/
