@@ -144,7 +144,7 @@
 4. **HSTS**：已有的 `includeSubDomains` 会自动覆盖子域名，无需额外配置
 5. **如果需要 Docker**：容器端口映射到 8080/8443 等非标准端口，再由宿主机 Nginx 反代到 `localhost:8080`
 
-### 部署状态（2026-07-29 已上线 ✅）
+### 部署状态（2026-07-31 更新 ✅）
 
 | 项目 | 值 |
 |------|-----|
@@ -156,3 +156,5 @@
 | Nginx 配置 | `/etc/nginx/sites-available/ai-summer`（反代 localhost:3000）|
 | SSL | 已通过 `certbot --expand` 添加到现有证书 |
 | DNS | `ai-summer` A 记录 → `47.236.92.136` |
+| **当前代码** | commit `61dca48`（48步FLOW v1.1，2026-07-31 部署）|
+| **部署方式** | ⚠️ 本地 git 直连 GitHub 不通（沙箱拦截），用 **bundle 中转**（本地打包→scp服务器→服务器push）|

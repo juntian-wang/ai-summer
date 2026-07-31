@@ -360,6 +360,7 @@ body {
   word-break: break-word;
 }
 .audience-cell:hover .audience-tip { display: block; }
+.audience-cell.tip-open .audience-tip { display: block; }
 
 /* 结果框 */
 .result-box {
@@ -833,7 +834,7 @@ function updateEmotionPanel(){
     const isPro=Math.random()<(totalPro/(totalPro+totalCon));
     const reaction=latestReactions[ae.id]||'';
     const thoughtHTML=reaction?`<br><span style="font-weight:400;font-size:13px;color:#ddd">${reaction}</span>`:'';
-    return `<div class="audience-cell ${isPro?'pro-bg':'con-bg'}">
+    return `<div class="audience-cell ${isPro?'pro-bg':'con-bg'}" onclick="this.classList.toggle('tip-open')">
       ${disp.emoji}
       <span class="audience-tip">${thoughtHTML||label}</span>
     </div>`;
@@ -1474,8 +1475,9 @@ function renderStep(step){
       }else{
         addRunoffPoint(step.pro);
       }
-      // 每次投票刷新所有观众的看法
-      if(useMock) refreshAllReactions();
+      // 每次投票刷新所有观众的看法（API 没返回感想时也用本地兜底）
+      const hasRealReactions=Object.values(latestReactions).some(v=>v&&v.length>5);
+      if(useMock||!hasRealReactions) refreshAllReactions();
       // 直接更新现有观众格子的悬停内容
       const cells=document.querySelectorAll('#auditorium .audience-cell');
       cells.forEach((cell,i)=>{
