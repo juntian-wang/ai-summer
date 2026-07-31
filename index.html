@@ -585,7 +585,6 @@ body {
     <div class="side-card" id="votePanel" style="display:none">
       <div class="side-card-header">实时投票</div>
       <div class="side-body" id="voteBody">
-        <div class="live-vote-init" id="voteInitLabel">INITIAL VOTE</div>
         <div style="display:flex;align-items:center;gap:4px;margin:4px 0">
           <span style="font-size:12px;font-weight:900;color:var(--red);min-width:22px">正</span>
           <div style="flex:1;height:22px;background:#eee;border:2px solid var(--dark);overflow:hidden;display:flex">
@@ -904,7 +903,6 @@ function addRunoffPoint(proVotes){
 }
 
 // ==================== 实时投票拉锯条 ====================
-let initialVoteDisplay=null;
 function updateVoteTugOfWar(){
   const panel=document.getElementById('votePanel');
   if(!panel)return;
@@ -914,12 +912,11 @@ function updateVoteTugOfWar(){
   const last=voteHistory[len-1];
   const pro=last.pro,con=last.con,total=pro+con;
   const proPct=Math.round(pro/total*100);
-  const init=initialVoteDisplay||last;
-  document.getElementById('voteInitLabel').textContent='INITIAL '+init.pro+':'+init.con;
   document.getElementById('sideProBar').style.width=proPct+'%';
   document.getElementById('sideConBar').style.width=(100-proPct)+'%';
   document.getElementById('sideProNum').textContent=pro;
   document.getElementById('sideConNum').textContent=con;
+  const init=voteHistory[0];
   const change=pro-init.pro;
   if(change!==0){
     document.getElementById('voteLeftDiff').textContent=change>0?'+'+change:''+change;
@@ -928,10 +925,6 @@ function updateVoteTugOfWar(){
     document.getElementById('voteLeftDiff').textContent='';
     document.getElementById('voteRightDiff').textContent='持平';
   }
-}
-function setInitialVote(pro,con){
-  initialVoteDisplay={pro,con};
-  updateVoteTugOfWar();
 }
 
 // ==================== 选择扮演方 ====================
@@ -1470,7 +1463,6 @@ function renderStep(step){
       scrollToBottom();
       if(step.stage==='initial'){
         lastInitialVoteData={pro:step.pro,con:step.con};
-        setInitialVote(step.pro,step.con);
         initRunoff(step.pro);
       }else{
         addRunoffPoint(step.pro);
