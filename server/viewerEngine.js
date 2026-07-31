@@ -216,6 +216,11 @@ function buildVotePrompt(viewer, session, voteType, fullDebateSummary) {
     ? `\n\n你的人生故事：\n${viewer.bio}\n\n你的价值观：${(viewer.values || []).join('、')}\n你的性格：${(viewer.personality?.traits || []).join('、')}`
     : '';
 
+  // 感想指令：初投是基于辩题的初步看法，mid/终投是基于辩论内容的反应
+  const reactionLine = voteType === 'init'
+    ? '请用一句话写下你对这个辩题的初步看法（100字以内），结合你的人生经历和价值观。不要写出"正方说""反方说"之类的话——辩论还没开始，你还没听到任何发言。'
+    : '请用一句话写下你听完刚才辩论后的感想（100字以内），就像你坐在观众席上跟着辩论走心了一样。';
+
   return `辩题：${session.topicTitle}
 你是${viewer.label}（${viewer.tendency}）。
 你特别关注：${viewer.dimensions.join('、')}${bioContent}${debateContent}
@@ -223,7 +228,7 @@ function buildVotePrompt(viewer, session, voteType, fullDebateSummary) {
 请根据你的人生经历、价值观和性格倾向，给出你的真实投票。选择支持正方(pro)、反方(con)或弃权(abstain)。
 注意：你的投票理由应该基于你真实的人生经历和价值观，不要给出和你人设矛盾的理由。
 
-另外，请用一句话写下你此刻的感想（100字以内），就像你坐在观众席上跟着辩论走心了一样。
+${reactionLine}
 
 回复JSON格式：{"choice":"pro","reason":"...","confidence":0.8,"reaction":"..."}`;
 }
