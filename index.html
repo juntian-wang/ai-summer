@@ -835,7 +835,7 @@ function updateEmotionPanel(){
     const thoughtHTML=reaction?`<br><span style="font-weight:400;font-size:13px;color:#ddd">${reaction}</span>`:'';
     return `<div class="audience-cell ${isPro?'pro-bg':'con-bg'}" onclick="this.classList.toggle('tip-open')">
       ${disp.emoji}
-      <span class="audience-tip">${thoughtHTML||label}</span>
+      <span class="audience-tip">${label}${thoughtHTML||''}</span>
     </div>`;
   }).join('');
   const summary=document.getElementById('audienceSummary');
