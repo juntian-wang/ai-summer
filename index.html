@@ -589,8 +589,8 @@ body {
         <div style="display:flex;align-items:center;gap:4px;margin:4px 0">
           <span style="font-size:12px;font-weight:900;color:var(--red);min-width:22px">正</span>
           <div style="flex:1;height:22px;background:#eee;border:2px solid var(--dark);overflow:hidden;display:flex">
-            <div id="sideProBar" style="background:var(--blue);width:50%;transition:width .8s;display:flex;align-items:center;justify-content:center;color:white;font-weight:900;font-size:11px"><span id="sideProNum">15</span></div>
-            <div id="sideConBar" style="background:var(--red);width:50%;transition:width .8s;display:flex;align-items:center;justify-content:center;color:white;font-weight:900;font-size:11px"><span id="sideConNum">15</span></div>
+            <div id="sideProBar" style="background:var(--red);width:50%;transition:width .8s;display:flex;align-items:center;justify-content:center;color:white;font-weight:900;font-size:11px"><span id="sideProNum">15</span></div>
+            <div id="sideConBar" style="background:var(--blue);width:50%;transition:width .8s;display:flex;align-items:center;justify-content:center;color:white;font-weight:900;font-size:11px"><span id="sideConNum">15</span></div>
           </div>
           <span style="font-size:12px;font-weight:900;color:var(--blue);min-width:22px;text-align:right">反</span>
         </div>
@@ -1197,10 +1197,10 @@ function buildMockSteps(topic,proTeam,conTeam,host,mentors){
     // 一辩立论（票少方先：正方先）
     {type:'host_template',text:`好，${sp1.side==='pro'?'正方':'反方'}${sp1.name}，一辩发言请！`},
     {type:'speech',side:sp1.side,name:sp1.name,label:sp1.label,pos:'一辩',
-      text:`这道题的关键，不在于"要不要"买房，而在于"买房"对我们这个时代意味着什么。当我们在问结婚要不要买房的时候，我们真正在问的是：我们要不要为婚姻寻找一个物质支点？我的回答是要。不是因为房子本身有多重要，而是因为它给了婚姻一个可以锚定的坐标。`},
+      text:`这道题的关键，不在于"要不要"买房，而在于"买房"对我们这个时代意味着什么。当我们在问结婚要不要买房的时候，我们真正在问的是：我们要不要为婚姻寻找一个物质支点？我的回答是要。不是因为房子本身有多重要，而是因为它给了婚姻一个可以锚定的坐标。我们这一代人最缺的是什么？是确定感。房租说涨就涨，房东说出差就让你搬走，我们在租来的房子里活得像一颗浮萍。而房子，哪怕再小，它给了你一个"这是我的家"的底气和安全感。你可以说这是物质的，但婚姻本身就是建立在物质与精神的双重基础上的。我不要求每个人都要买房，但我要说：如果条件允许，先有一个自己的家，再谈诗和远方。`},
     {type:'host_template',text:`好，${sp2.side==='pro'?'正方':'反方'}${sp2.name}，请！`},
     {type:'speech',side:sp2.side,name:sp2.name,label:sp2.label,pos:'一辩',
-      text:`今天看到很多人在争论这个问题，我想说一个最简单的道理：两个人在一起，爱是最重要的，没有爱，什么房子都白搭。`},
+      text:`对方辩友说得很有感染力，但我要提醒大家一个事实：今天的年轻人，不是不想买房，是买不起。我们讨论的辩题是什么？是"结婚到底要不要买房"。如果这是一个可选项，那当然要——可现实是，高房价把这个问题变成了一个伪命题。你让一个月薪八千的年轻人怎么面对一线城市的六万一平？硬买房的结果是什么？掏空六个钱包，背上三十年房贷，两个人在最该轻松享受生活的年纪，被一套房子压得喘不过气。我见过太多为房贷吵架的夫妻，也见过太多租房却恩爱的家庭。房子是身外之物，爱才是婚姻的基石。没有爱，住再大的房子也是冰窖；有爱，租来的小屋也是家。`},
     {type:'mentor_comment',name:mentorCommentNames.p1,
       text:'婚姻的基础从来不是房子，而是两个人都愿意为彼此妥协的那份心意。'},
     // 一辩开杠（延续：正方先）
@@ -1219,10 +1219,10 @@ function buildMockSteps(topic,proTeam,conTeam,host,mentors){
     // 二辩立论（与一辩相反：反方先）
     {type:'host_template',text:'好，接下来进入二辩环节！'},
     {type:'speech',side:s2p1.side,name:s2p1.name,label:s2p1.label,pos:'二辩',
-      text:`我有个闺蜜，跟她老公结婚的时候，两家凑了首付买了房。两年后，两个人为了装修风格吵了无数次，最后一地鸡毛。`},
+      text:`我有个闺蜜，跟她老公结婚的时候，两家凑了首付买了房。当时所有人都说，有了房子就有了家。结果呢？两个人为了装修风格吵了无数次，为了房贷每月精打细算，最后因为"这房子写谁的名字"闹到差点离婚。房子没有给他们带来安全感，反而成了压垮婚姻的最后一根稻草。反方一辩说得对，爱才是婚姻的基础。但我想再往前走一步：当我们把买房当成婚姻的"前提条件"时，我们其实是在用一套房子绑架一段感情。真正该问的不是"买房了吗"，而是"你们准备好一起面对生活的风浪了吗"。如果没准备好，房子只会放大矛盾；如果准备好了，租房也能过出滋味。`},
     {type:'host_template',text:`好，${s2p2.side==='pro'?'正方':'反方'}${s2p2.name}，请！`},
     {type:'speech',side:s2p2.side,name:s2p2.name,label:s2p2.label,pos:'二辩',
-      text:`我们换个角度想。从经济学的角度来看，买房本质上是一种强制储蓄。结婚后的前十年，是最容易因为琐事吵架的十年。而有房贷的夫妻，反而多了一个"不能随便辞职"的共同约束。`},
+      text:`我们换个角度想。从经济学的角度来看，买房本质上是一种强制储蓄，一种对抗风险的锚。结婚后的前十年，是最容易因为琐事吵架的十年——育儿、婆媳、职场压力。而有一套自己的房子，意味着你们的争吵有一个"关起门来"的空间，意味着孩子有一个稳定的成长环境，意味着当生活出现变故时，你们至少有一个不会被赶走的家。我不是说爱不重要，恰恰相反，正因为爱重要，我们才更应该为爱提供物质保障。你可以说租房很自由，但自由不等于安全感。我见过太多夫妻因为房东一句话就得连夜搬家，那种漂泊感，才是最消耗婚姻的。买房不是为了炫耀，是为了让爱有一个落脚的地方。`},
     {type:'mentor_comment',name:mentorCommentNames.p2,
       text:'二辩的发言很有深度，双方都找到了很好的切入点。'},
     // 二辩环节后投票
@@ -1231,10 +1231,10 @@ function buildMockSteps(topic,proTeam,conTeam,host,mentors){
     // 三辩立论（回到一辩顺序：正方先）
     {type:'host_template',text:'好，接下来进入三辩环节！'},
     {type:'speech',side:s3p1.side,name:s3p1.name,label:s3p1.label,pos:'三辩',
-      text:`我想讲一个故事。我有个朋友，结婚五年一直租房住。去年房东说要卖房，他们一家三口在两个月内搬了三次家。`},
+      text:`我想讲一个故事。我有个朋友，结婚五年一直租房住。去年房东说要卖房，让他们一个月内搬走。他们一家三口在两周里看了二十多套房，最后在城中村租了个只有四十平的小房子。那天晚上，他老婆哭了，说："我们好像永远在别人的生活里路过。"那一刻我明白了——买房买的不是砖瓦，是"我属于这里"的归属感。当然，我也承认，现在的房价对年轻人不友好。所以我们的辩题从来不是"该不该买房"，而是"在婚姻里，我们要不要为这个家争取一个稳定的锚"。可以买不起大的，但至少要有一个方向、一个计划。连方向都没有的婚姻，才是真正的漂泊。`},
     {type:'host_template',text:`好，${s3p2.side==='pro'?'正方':'反方'}${s3p2.name}，请！`},
     {type:'speech',side:s3p2.side,name:s3p2.name,label:s3p2.label,pos:'三辩',
-      text:`房子和家，是一回事吗？房子不是家，家是住出来的，不是买出来的。`},
+      text:`对方辩友讲了朋友的租房故事，很心酸，但我想问：这个故事里，让那对夫妻痛苦的，真的是"没有房子"吗？还是那种被生活推着走、没有掌控感的无力？如果是无力感，那房子就能解决吗？买了房的人，就不漂泊了吗？我见过太多背着房贷、不敢换工作、不敢生二胎、连吵架都要挑客厅的人。他们有了房子，但依然没有安全感。我想说的是：家的本质是"人"，不是"房"。婚姻的锚，是两个人互相托底的那份信任，而不是一纸房产证。我们把太多期待寄托在房子上了，以为买了房就万事大吉——但真正决定婚姻质量的，永远是两个人怎么相处。房子可以是锦上添花，但绝不该是雪中送炭。`},
     {type:'mentor_comment',name:mentorCommentNames.p3,
       text:'三辩的表现让我看到了辩论的高度，不仅仅是观点的较量。'},
     // 三辩开杠（当前落后方先：反方先）
@@ -1253,10 +1253,10 @@ function buildMockSteps(topic,proTeam,conTeam,host,mentors){
     // 结辩（先发后结：反方先结辩、正方压轴）
     {type:'host_template',text:`好，${c1.side==='pro'?'正方':'反方'}${c1.name}，先结辩，请！`},
     {type:'closing',side:c1.side,name:c1.name,label:c1.label,
-      text:`说了这么多，我的立场其实很简单。结婚要不要买房？我的回答是：有钱就买，没钱别硬买。千万别让一套房子，毁掉两个人最该轻松快乐的几年。房子有的是，但那个愿意跟你一起面对一切的人，错过了，可能就真的回不来了。`},
+      text:`说了这么多，我的立场其实很简单。结婚要不要买房？我的回答是：有钱就买，没钱别硬买。但我真正想说的是另一件事——我们为什么非要把"买房"和"结婚"绑在一起？因为在我们这个社会里，房子承载了太多本不属于它的意义：它是安全感，是面子，是丈母娘的认可，是"我在这个城市扎下根了"的证明。可这些意义，恰恰是套在婚姻上的枷锁。两个人决定共度一生，靠的是三观契合、互相扶持，而不是一套房子的产权。如果你买得起，那是锦上添花；如果买不起，请记住：房子有的是，但那个愿意跟你一起面对一切的人，错过了，可能就真的回不来了。`},
     {type:'host_template',text:`好，${c2.side==='pro'?'正方':'反方'}${c2.name}，请做最后的结辩！`},
     {type:'closing',side:c2.side,name:c2.name,label:c2.label,
-      text:`最后我想说——我们这一代人，总在说"逃离北上广"，总在说"租来的生活"。但你们有没有想过，当我们谈起婚姻的时候，我们到底在怕什么？我们怕的不是没有房子，我们怕的是没有根。`},
+      text:`最后我想说——我们这一代人，总在说"逃离北上广"，总在说"租来的生活"。但你们有没有想过，当我们谈起婚姻的时候，我们到底在怕什么？我们怕的不是没有房子，我们怕的是没有根。而根，恰恰需要一套房子来扎。我不是说爱不重要，我是说，爱需要一个容器。孩子需要一个固定的学校，老人需要一个能走动的阳台，我们自己需要一个深夜加班回来还能安心躺下的角落。房子不是婚姻的全部，但它是婚姻最坚实的底座。两个人可以一起奋斗，可以一起还贷，可以一起把空荡荡的毛坯房变成温暖的家——这个过程本身，就是婚姻最美好的样子。所以，如果有条件，买吧；如果暂时没有，那就一起努力，给你们的爱一个家。`},
     // 终投 + 导师点评
     {type:'host_template',text:'好，本场辩论到此结束。请各位观众投出最后一票！'},
     {type:'vote',stage:'final',pro:19,con:11,
@@ -1418,7 +1418,7 @@ function renderStep(step){
         tag.textContent=step.strategyName;
         sides[idx].querySelector('.cross-name').appendChild(tag);
       }
-      sides[idx].classList.add('pro');
+      sides[idx].classList.add(step.side==='pro'?'pro':'con');
       scrollToBottom();
       const feats=analyzeText(step.text);
       computeReactions(feats);
@@ -1472,12 +1472,14 @@ function renderStep(step){
         lastInitialVoteData={pro:step.pro,con:step.con};
         setInitialVote(step.pro,step.con);
         initRunoff(step.pro);
+        // 初投：观众还没听发言，不生成感想
+        latestReactions={};
       }else{
         addRunoffPoint(step.pro);
+        // 发言后的投票：生成/更新感想（API 没返回感想时用本地兜底）
+        const hasRealReactions=Object.values(latestReactions).some(v=>v&&v.length>5);
+        if(useMock||!hasRealReactions) refreshAllReactions();
       }
-      // 每次投票刷新所有观众的看法（API 没返回感想时也用本地兜底）
-      const hasRealReactions=Object.values(latestReactions).some(v=>v&&v.length>5);
-      if(useMock||!hasRealReactions) refreshAllReactions();
       // 直接更新现有观众格子的悬停内容
       const cells=document.querySelectorAll('#auditorium .audience-cell');
       cells.forEach((cell,i)=>{
