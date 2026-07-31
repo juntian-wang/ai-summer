@@ -1472,14 +1472,12 @@ function renderStep(step){
         lastInitialVoteData={pro:step.pro,con:step.con};
         setInitialVote(step.pro,step.con);
         initRunoff(step.pro);
-        // 初投：观众还没听发言，不生成感想
-        latestReactions={};
       }else{
         addRunoffPoint(step.pro);
-        // 发言后的投票：生成/更新感想（API 没返回感想时用本地兜底）
-        const hasRealReactions=Object.values(latestReactions).some(v=>v&&v.length>5);
-        if(useMock||!hasRealReactions) refreshAllReactions();
       }
+      // 每次投票（初投/环节投/终投）都刷新感想（API 没返回感想时用本地兜底）
+      const hasRealReactions=Object.values(latestReactions).some(v=>v&&v.length>5);
+      if(useMock||!hasRealReactions) refreshAllReactions();
       // 直接更新现有观众格子的悬停内容
       const cells=document.querySelectorAll('#auditorium .audience-cell');
       cells.forEach((cell,i)=>{
