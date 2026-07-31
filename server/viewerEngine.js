@@ -181,6 +181,7 @@ async function voteSingleViewer(viewer, session, voteType, fullDebateSummary) {
           choice: parsed.choice,
           reason: parsed.reason || '',
           confidence: parsed.confidence || 0.5,
+          reaction: parsed.reaction || '',
         };
       }
 
@@ -221,9 +222,15 @@ function buildVotePrompt(viewer, session, voteType, fullDebateSummary) {
     ? '请用一句话写下你对这个辩题的初步看法（100字以内），结合你的人生经历和价值观。不要写出"正方说""反方说"之类的话——辩论还没开始，你还没听到任何发言。'
     : '请用一句话写下你听完刚才辩论后的感想（100字以内），就像你坐在观众席上跟着辩论走心了一样。';
 
+  // 注入正反方立场描述（自定义辩题通过校验后生成）
+  let positionLine = '';
+  if (session.topicPosition && session.topicPosition.pro && session.topicPosition.con) {
+    positionLine = `\n\n辩题立场解读：\n- 正方立场：${session.topicPosition.pro}\n- 反方立场：${session.topicPosition.con}`;
+  }
+
   return `辩题：${session.topicTitle}
 你是${viewer.label}（${viewer.tendency}）。
-你特别关注：${viewer.dimensions.join('、')}${bioContent}${debateContent}
+你特别关注：${viewer.dimensions.join('、')}${bioContent}${debateContent}${positionLine}
 
 请根据你的人生经历、价值观和性格倾向，给出你的真实投票。选择支持正方(pro)、反方(con)或弃权(abstain)。
 注意：你的投票理由应该基于你真实的人生经历和价值观，不要给出和你人设矛盾的理由。
@@ -257,10 +264,12 @@ function parseVoteJson(text) {
     if (choiceMatch) {
       const reasonMatch = text.match(/"reason"\s*:\s*"([^"]+)"/);
       const confMatch = text.match(/"confidence"\s*:\s*([0-9.]+)/);
+      const reactionMatch = text.match(/"reaction"\s*:\s*"([^"]+)"/);
       return {
         choice: choiceMatch[1],
         reason: reasonMatch ? reasonMatch[1] : '',
         confidence: confMatch ? parseFloat(confMatch[1]) : 0.5,
+        reaction: reactionMatch ? reactionMatch[1] : '',
       };
     }
     return null;

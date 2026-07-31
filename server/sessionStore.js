@@ -228,7 +228,7 @@ function getHostProfile() {
  * @param {string[]} conTeamIds - 反方三辩手ID数组 [firstId, secondId, thirdId]
  * @returns {string} sessionId
  */
-function createSession(topicIndex, proTeamIds, conTeamIds, customTopic) {
+function createSession(topicIndex, proTeamIds, conTeamIds, customTopic, topicPosition) {
   const data = loadAllData();
 
   // 选择辩题：优先使用自定义辩题
@@ -321,6 +321,7 @@ function createSession(topicIndex, proTeamIds, conTeamIds, customTopic) {
       totalDegrades: 0,
     },
     mentorStances: mentorStances,  // { xuezhaofeng: 'pro', liuqin: 'con', ... }
+    topicPosition: topicPosition || null,  // { pro: '...', con: '...' } 自定义辩题的正反方立场描述
     createdAt: now,
     lastAccessedAt: now,
     // 开杠控制器：支持用户选择扮演方和策略

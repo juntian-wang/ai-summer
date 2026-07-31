@@ -601,10 +601,150 @@ function validateBattleResponse(output, session, flowStep) {
   const missing = opponentKeywords.filter(kw => !outputKeywords.includes(kw));
 
   return {
-    valid: matched.length > 0,
+    valid: true,  // 改为总为true：关键词验证只做参考，不做硬性拦截
     matchedKeywords: matched,
     missingKeywords: missing,
   };
+}
+
+// ===== 自定义辩题校验 =====
+
+/**
+ * 构建辩题可辩论性评估 Prompt
+ * @param {string} topic - 用户输入的自定义辩题
+ * @returns {Array} messages数组
+ */
+function buildTopicValidationPrompt(topic) {
+  const systemPrompt = `你是一个辩论节目制片人兼辩论教练，负责评估自定义辩题是否适合作为辩论赛题目。
+
+评估标准：
+1. **争议性**：是否有真正的两难，还是答案显而易见（如"人应该吃饭吗"→不适合）
+2. **均衡性**：双方是否有相对均衡的论证空间（明显一边倒→需提醒）
+3. **可拆解性**：能否清晰拆出正反两方立场（无法拆解→不适合）
+4. **具体性**：是否具体可讨论，而非空泛口号（太抽象→需提醒）
+5. **生活关联**：是否贴近观众能共情的生活议题（非必须，但加分）
+
+你必须返回一个严格的JSON格式响应，不要有任何其他文本。
+
+JSON格式：
+{"verdict":"ok或warn或reject","reason":"一句话评估说明（20字以内）","pro_position":"正方立场描述（20字以内）","con_position":"反方立场描述（20字以内）","debateability":0.0到1.0之间的数值}
+
+verdict说明：
+- ok: 双方论证空间充分，适合公开辩论
+- warn: 有一定辩论空间，但存在明显偏差或隐患（如一边倒倾向），可以辩论但需提醒用户
+- reject: 不适合辩论——无争议、无法拆解、或答案显而易见
+
+你必须直接返回JSON，不要用代码块包裹，不要加任何前缀后缀。`;
+
+  const userPrompt = `请评估以下辩题是否适合辩论：
+
+辩题：${topic}
+
+请严格按照JSON格式输出评估结果。`;
+
+  return [
+    { role: 'system', content: systemPrompt },
+    { role: 'user', content: userPrompt },
+  ];
+}
+
+/**
+ * 评估自定义辩题的可辩论性
+ * @param {string} topic - 用户输入的自定义辩题
+ * @returns {Promise<Object>} {success, verdict, reason, proPosition, conPosition, debateability, error}
+ */
+async function evaluateTopic(topic) {
+  if (!topic || topic.trim().length === 0) {
+    return { success: false, error: '辩题不能为空', verdict: 'reject' };
+  }
+
+  // 基本规则校验：太短/太长的辩题直接拒绝
+  const trimmed = topic.trim();
+  if (trimmed.length < 4) {
+    return {
+      success: true, verdict: 'reject',
+      reason: '辩题太短，不够具体',
+      proPosition: '', conPosition: '', debateability: 0.1,
+    };
+  }
+  if (trimmed.length > 80) {
+    return {
+      success: true, verdict: 'warn',
+      reason: '辩题过长，建议精简到30字以内',
+      proPosition: '正方支持该观点', conPosition: '反方反对该观点', debateability: 0.5,
+    };
+  }
+
+  const messages = buildTopicValidationPrompt(trimmed);
+
+  try {
+    const result = await callLLM(messages, 15000);
+
+    if (!result.success) {
+      // LLM调用失败 → 降级：跳过校验
+      console.warn(`[agentEngine] 辩题校验LLM调用失败: ${result.error}，降级跳过校验`);
+      return {
+        success: true, verdict: 'ok',
+        reason: '（校验服务暂时不可用，已跳过校验）',
+        proPosition: '', conPosition: '', debateability: 0.5,
+        degraded: true,
+      };
+    }
+
+    // 解析JSON
+    const parsed = parseValidationJson(result.content);
+    if (parsed && ['ok', 'warn', 'reject'].includes(parsed.verdict)) {
+      return {
+        success: true,
+        verdict: parsed.verdict,
+        reason: parsed.reason || '',
+        proPosition: parsed.pro_position || '',
+        conPosition: parsed.con_position || '',
+        debateability: typeof parsed.debateability === 'number' ? parsed.debateability : 0.5,
+        degraded: false,
+      };
+    }
+
+    // JSON解析失败 → 降级：跳过校验
+    console.warn(`[agentEngine] 辩题校验JSON解析失败: "${result.content.substring(0, 80)}..."，降级跳过校验`);
+    return {
+      success: true, verdict: 'ok',
+      reason: '（校验结果解析失败，已跳过校验）',
+      proPosition: '', conPosition: '', debateability: 0.5,
+      degraded: true,
+    };
+  } catch (err) {
+    // 网络/超时 → 降级：跳过校验
+    console.warn(`[agentEngine] 辩题校验异常: ${err.message}，降级跳过校验`);
+    return {
+      success: true, verdict: 'ok',
+      reason: '（校验服务异常，已跳过校验）',
+      proPosition: '', conPosition: '', debateability: 0.5,
+      degraded: true,
+    };
+  }
+}
+
+/**
+ * 解析辩题校验的JSON响应
+ * @param {string} text - LLM回复文本
+ * @returns {Object|null} 解析结果
+ */
+function parseValidationJson(text) {
+  try {
+    return JSON.parse(text.trim());
+  } catch (e1) {
+    // 尝试从文本中提取JSON块（可能有代码块包裹）
+    const jsonMatch = text.match(/\{[\s\S]*"verdict"[\s\S]*\}/);
+    if (jsonMatch) {
+      try {
+        return JSON.parse(jsonMatch[0]);
+      } catch (e2) {
+        // 忽略
+      }
+    }
+    return null;
+  }
 }
 
 // ===== 降级和占位 =====
@@ -915,6 +1055,9 @@ module.exports = {
   buildMentorPrompt,
   buildMentorCommentPrompt,
   buildSimplifiedPrompt,
+  buildTopicValidationPrompt,
+  evaluateTopic,
+  parseValidationJson,
   validateOutput,
   validateBattleResponse,
   extractKeywords,

@@ -39,14 +39,59 @@ app.use('/audio', express.static(path.join(__dirname, 'audio')));
 
 // === API 路由 ===
 
+// POST /api/topic/validate — 校验自定义辩题的可辩论性
+app.post('/api/topic/validate', async (req, res) => {
+  try {
+    const { topic } = req.body;
+    if (!topic || topic.trim().length === 0) {
+      return res.status(400).json({ code: 400, data: null, message: '辩题不能为空' });
+    }
+
+    const result = await agentEngine.evaluateTopic(topic.trim());
+
+    if (result.verdict === 'reject' && !result.success) {
+      // evaluateTopic 返回 success=false 只在"辩题为空"时出现，已被上面拦截
+      return res.status(500).json({ code: 500, data: null, message: result.error || '校验失败' });
+    }
+
+    res.json({
+      code: 200,
+      data: {
+        verdict: result.verdict,
+        reason: result.reason || '',
+        proPosition: result.proPosition || '',
+        conPosition: result.conPosition || '',
+        debateability: result.debateability || 0.5,
+        degraded: result.degraded || false,
+      },
+      message: 'ok',
+    });
+  } catch (err) {
+    // 任何未预料的错误 → 降级：跳过校验
+    console.error('[server] 辩题校验异常:', err.message);
+    res.json({
+      code: 200,
+      data: {
+        verdict: 'ok',
+        reason: '（校验服务异常，已跳过校验）',
+        proPosition: '',
+        conPosition: '',
+        debateability: 0.5,
+        degraded: true,
+      },
+      message: 'ok',
+    });
+  }
+});
+
 // POST /api/session/start — 创建辩论Session
 app.post('/api/session/start', async (req, res) => {
   try {
-    const { pro, con, topicIndex, customTopic, voiceEnabled } = req.body;
+    const { pro, con, topicIndex, customTopic, voiceEnabled, topicPosition } = req.body;
     if (!pro || !con || !Array.isArray(pro) || !Array.isArray(con) || pro.length !== 3 || con.length !== 3) {
       return res.status(400).json({ code: 400, data: null, message: '需要pro和con各3个辩手ID' });
     }
-    const sessionId = sessionStore.createSession(topicIndex, pro, con, customTopic);
+    const sessionId = sessionStore.createSession(topicIndex, pro, con, customTopic, topicPosition);
     // 存储语音开关状态（?z模式）
     const session = sessionStore.getSession(sessionId);
     // 语音开关：默认关闭，仅 ?z 模式开启
@@ -828,12 +873,12 @@ async function executeNextStep(session) {
     consecutiveSpeechFailures = Math.max(0, consecutiveSpeechFailures - 1);
   }
 
-  // battle/closing降级失败 → ABORT
+  // battle/closing降级失败 → 用占位文本继续，不终止辩论
   if ((flowStep.type === 'battle' || flowStep.type === 'closing') && !result.success && result.degraded) {
-    session.status = 'ABORTED';
-    sessionStore.updateSession(session.id, { status: 'ABORTED' });
-    console.warn(`[server] ${flowStep.type}步骤降级失败，终止辩论`);
-    return { done: true, status: 'ABORTED', reason: `${flowStep.type}步骤降级失败` };
+    console.warn(`[server] ${flowStep.type}步骤所有尝试失败，使用占位文本继续`);
+    result.content = agentEngine.generateFallbackContent(flowStep, session);
+    result.success = true;
+    result.degraded = true;
   }
 
   // 确定发言人名字

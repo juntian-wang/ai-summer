@@ -214,6 +214,32 @@ body {
 .topic-row select:focus, .topic-row input:focus { box-shadow: 4px 4px 0 var(--yellow); }
 .topic-row input::placeholder { color: #999; }
 
+/* 辩题校验提示条 */
+.topic-validate-hint {
+  display: none;
+  padding: 10px 14px; margin: 0 0 14px 0;
+  border-radius: 8px; font-weight: 700; font-size: 13px;
+  font-family: 'Noto Sans SC', sans-serif;
+  align-items: center; gap: 8px;
+  border: 3px solid transparent;
+  line-height: 1.5;
+}
+.topic-validate-hint.show { display: flex; }
+.topic-validate-hint.ok { background: #d4edda; color: #155724; border-color: #c3e6cb; }
+.topic-validate-hint.warn { background: #fff3cd; color: #856404; border-color: #ffeeba; }
+.topic-validate-hint.reject { background: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+.topic-validate-hint .hint-icon { font-size: 18px; flex-shrink: 0; }
+.topic-validate-hint .hint-text { flex: 1; }
+.topic-validate-hint .hint-action {
+  padding: 5px 12px; border-radius: 6px; cursor: pointer;
+  font-weight: 900; font-size: 12px; border: 2px solid; white-space: nowrap;
+  transition: all 0.12s;
+}
+.topic-validate-hint.warn .hint-action {
+  background: #ffc107; color: #856404; border-color: #856404;
+}
+.topic-validate-hint.warn .hint-action:hover { background: #e0a800; }
+
 .teams-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
 @media (max-width: 768px) { .teams-row { grid-template-columns: 1fr; } }
 .team-box {
@@ -783,6 +809,13 @@ body {
     <span class="row-tag">辩题</span>
     <select id="topicSelect"></select>
     <input id="topicCustom" type="text" placeholder="或自己输入一个辩题...">
+  </div>
+
+  <!-- 辩题校验提示条 -->
+  <div class="topic-validate-hint" id="topicValidateHint">
+    <span class="hint-icon"></span>
+    <span class="hint-text"></span>
+    <button class="hint-action" style="display:none" onclick="continueWarnTopic()">仍要继续</button>
   </div>
 
   <div class="teams-row">
@@ -2112,12 +2145,94 @@ function skipStep(){
   if(!playRunning)playLoop();
 }
 
+let pendingTopicData=null; // 校验通过后缓存的辩题数据（自定义辩题的立场等）
+
+function hideTopicHint(){
+  const hint=document.getElementById('topicValidateHint');
+  hint.classList.remove('show','ok','warn','reject');
+}
+
+function showTopicHint(verdict,data){
+  const hint=document.getElementById('topicValidateHint');
+  const icon=hint.querySelector('.hint-icon');
+  const text=hint.querySelector('.hint-text');
+  const btn=hint.querySelector('.hint-action');
+  hint.classList.remove('ok','warn','reject');
+  hint.classList.add('show',verdict);
+  if(verdict==='ok'){
+    icon.textContent='✅'; text.textContent=data.reason||'辩题可辩论性良好，可以开始！';
+    btn.style.display='none';
+  }else if(verdict==='warn'){
+    icon.textContent='⚠️'; text.textContent=(data.reason||'该辩题可能存在偏向，投票可能悬殊')+' — 是否继续？';
+    btn.style.display='inline-block';
+  }else{
+    icon.textContent='🚫'; text.textContent=data.reason||'该辩题不适合辩论，请修改';
+    btn.style.display='none';
+  }
+}
+
+function continueWarnTopic(){
+  hideTopicHint();
+  startDebateInternal();
+}
+
+async function validateTopic(topic){
+  try{
+    const res=await fetch('/api/topic/validate',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({topic})
+    });
+    const json=await res.json();
+    if(json.code===200&&json.data)return json.data;
+    console.warn('[Validate] API返回异常:',json.message);
+    return {verdict:'ok',reason:'（校验服务异常，已跳过）',proPosition:'',conPosition:'',debateability:0.5,degraded:true};
+  }catch(e){
+    console.warn('[Validate] 校验请求失败:',e.message);
+    return {verdict:'ok',reason:'（校验服务异常，已跳过）',proPosition:'',conPosition:'',debateability:0.5,degraded:true};
+  }
+}
+
 async function startDebate(){
   const topicEl=document.getElementById('topicSelect');
   const custom=document.getElementById('topicCustom').value.trim();
   const topicIndex=topicEl.value!==''?parseInt(topicEl.value):-1;
   let topic=custom||(topicIndex>=0?TOPICS[topicIndex].title:'');
   if(!topic){toast('请选择或输入一个辩题');return}
+
+  // 仅自定义辩题才校验（预置辩题已审核过）
+  if(custom){
+    const result=await validateTopic(topic);
+    if(result.degraded){
+      // 降级：跳过校验，打日志但继续
+      console.log('[Validate] 降级跳过校验:',result.reason);
+      pendingTopicData=null;
+      startDebateInternal();
+      return;
+    }
+    if(result.verdict==='reject'){
+      showTopicHint('reject',result);
+      return;
+    }
+    if(result.verdict==='warn'){
+      pendingTopicData=result;
+      showTopicHint('warn',result);
+      return; // 等用户点"仍要继续"
+    }
+    // ok: 缓存立场数据，继续
+    pendingTopicData=result;
+    hideTopicHint();
+  }else{
+    pendingTopicData=null;
+  }
+
+  startDebateInternal();
+}
+
+async function startDebateInternal(){
+  const topicEl=document.getElementById('topicSelect');
+  const custom=document.getElementById('topicCustom').value.trim();
+  const topicIndex=topicEl.value!==''?parseInt(topicEl.value):-1;
+  let topic=custom||(topicIndex>=0?TOPICS[topicIndex].title:'');
 
   document.getElementById('btnStart').disabled=true;
   document.getElementById('btnStart').textContent='🎙️ 辩论中...';
@@ -2145,6 +2260,9 @@ async function startDebate(){
       const body={pro:proEls.map(i=>DEBATERS[parseInt(i)].id),con:conEls.map(i=>DEBATERS[parseInt(i)].id),voiceEnabled:hasVoiceParam};
       if(topicIndex>=0)body.topicIndex=topicIndex;
       if(custom)body.customTopic=custom;
+      if(pendingTopicData&&pendingTopicData.proPosition&&pendingTopicData.conPosition){
+        body.topicPosition={pro:pendingTopicData.proPosition,con:pendingTopicData.conPosition};
+      }
       const res=await fetch('/api/session/start',{
         method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify(body)
